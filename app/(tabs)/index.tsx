@@ -232,21 +232,8 @@ export default function HomeScreen() {
           <FormScore score={82} />
         </Animated.View>
 
-        {/* Treino de Hoje */}
-        <Animated.View style={entrance(1)}>
-          <TodayWorkout />
-        </Animated.View>
-
-        {/* Quick Actions */}
-        <Animated.View style={[s.quickRow, entrance(2)]}>
-          <QuickAction icon="📷" label="Check-in" sub="ACADEMIA" gradient={['#064E3B', '#065F46']} />
-          <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={['#4C1D95', '#6D28D9']} />
-          <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={['#78350F', '#92400E']} />
-          <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={['#1E3A5F', '#1D4ED8']} />
-        </Animated.View>
-
-        {/* Fire Hero Card */}
-        <Animated.View style={[s.heroCard, entrance(3)]}>
+        {/* Fire Hero Card — Dias de Fogo */}
+        <Animated.View style={[s.heroCard, entrance(2)]}>
           <LinearGradient colors={['#280D00', '#1A0830', '#07090F']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} />
           <View style={s.heroBorder} />
           <View style={s.heroGlow} />
@@ -256,6 +243,19 @@ export default function HomeScreen() {
               <Mascot size={120} mood="happy" />
             </View>
           </View>
+        </Animated.View>
+
+        {/* Treino de Hoje */}
+        <Animated.View style={entrance(2)}>
+          <TodayWorkout />
+        </Animated.View>
+
+        {/* Quick Actions */}
+        <Animated.View style={[s.quickRow, entrance(3)]}>
+          <QuickAction icon="📷" label="Check-in" sub="ACADEMIA" gradient={['#064E3B', '#065F46']} />
+          <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={['#4C1D95', '#6D28D9']} />
+          <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={['#78350F', '#92400E']} />
+          <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={['#1E3A5F', '#1D4ED8']} />
         </Animated.View>
 
         {/* Week */}
