@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Svg, Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
-import { Trophy, ArrowRight, ChevronRight, Zap, Shield, Camera } from 'lucide-react-native';
+import { Trophy, ChevronRight, Zap, Shield, Dumbbell, Flame } from 'lucide-react-native';
 import { Colors } from '../../constants/Colors';
 import { Mascot } from '../../components/Mascot';
 
@@ -99,24 +99,58 @@ function FormScore({ score }: { score: number }) {
   );
 }
 
-function QuickAction({ icon, label, color, onPress }: any) {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const press = () => {
+function QuickAction({ icon, label, sub, gradient, onPress }: any) {
+  const sc = useRef(new Animated.Value(1)).current;
+  const tap = () => {
     Animated.sequence([
-      Animated.timing(scaleAnim, { toValue: 0.92, duration: 80, useNativeDriver: true }),
-      Animated.spring(scaleAnim, { toValue: 1, friction: 4, useNativeDriver: true }),
+      Animated.timing(sc, { toValue: 0.93, duration: 70, useNativeDriver: true }),
+      Animated.spring(sc, { toValue: 1, friction: 4, useNativeDriver: true }),
     ]).start();
     onPress?.();
   };
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <TouchableOpacity onPress={press} style={s.quickAction} activeOpacity={0.9}>
-        <View style={[s.quickIconBox, { backgroundColor: color + '20', borderColor: color + '35' }]}>
-          <Text style={{ fontSize: 22 }}>{icon}</Text>
+    <Animated.View style={[s.quickCard, { transform: [{ scale: sc }] }]}>
+      <TouchableOpacity onPress={tap} activeOpacity={0.9} style={{ flex: 1 }}>
+        <LinearGradient colors={gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFill, { borderRadius: 20 }]} />
+        <View style={s.quickCardInner}>
+          <Text style={s.quickCardEmoji}>{icon}</Text>
+          <Text style={s.quickCardLabel}>{label}</Text>
+          <Text style={s.quickCardSub}>{sub}</Text>
         </View>
-        <Text style={s.quickLabel}>{label}</Text>
       </TouchableOpacity>
     </Animated.View>
+  );
+}
+
+function TodayWorkout() {
+  const muscles = ['🫁 Peito', '🦾 Tríceps', '💪 Ombro'];
+  return (
+    <View style={s.todayCard}>
+      <LinearGradient colors={['#0D1829', '#080F1C']} style={StyleSheet.absoluteFill} />
+      <View style={s.todayBorder} />
+      <View style={s.todayTop}>
+        <View style={{ flex: 1 }}>
+          <Text style={s.todayTag}>TREINO RECOMENDADO HOJE</Text>
+          <Text style={s.todayTitle}>Peito + Tríceps</Text>
+          <View style={s.muscleRow}>
+            {muscles.map((m, i) => (
+              <View key={i} style={s.musclePill}><Text style={s.musclePillText}>{m}</Text></View>
+            ))}
+          </View>
+        </View>
+        <View style={s.todayStats}>
+          <View style={s.todayStat}><Text style={s.todayStatVal}>4</Text><Text style={s.todayStatLbl}>exerc.</Text></View>
+          <View style={s.todayStatDiv} />
+          <View style={s.todayStat}><Text style={s.todayStatVal}>45</Text><Text style={s.todayStatLbl}>min</Text></View>
+        </View>
+      </View>
+      <TouchableOpacity style={s.todayBtn} activeOpacity={0.88}>
+        <LinearGradient colors={[Colors.primary, '#C2410C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+        <Dumbbell size={15} color="white" />
+        <Text style={s.todayBtnText}>INICIAR TREINO</Text>
+        <ChevronRight size={15} color="white" />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -198,18 +232,24 @@ export default function HomeScreen() {
           <FormScore score={82} />
         </Animated.View>
 
+        {/* Treino de Hoje */}
+        <Animated.View style={entrance(1)}>
+          <TodayWorkout />
+        </Animated.View>
+
         {/* Quick Actions */}
         <Animated.View style={[s.quickRow, entrance(2)]}>
-          <QuickAction icon="📷" label="Check-in" color={Colors.success} />
-          <QuickAction icon="🔥" label="Treinar" color={Colors.primary} />
-          <QuickAction icon="⚔️" label="Duelo" color={Colors.purple} />
-          <QuickAction icon="🏆" label="Liga" color={Colors.gold} />
+          <QuickAction icon="📷" label="Check-in" sub="ACADEMIA" gradient={['#064E3B', '#065F46']} />
+          <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={['#4C1D95', '#6D28D9']} />
+          <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={['#78350F', '#92400E']} />
+          <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={['#1E3A5F', '#1D4ED8']} />
         </Animated.View>
 
         {/* Fire Hero Card */}
         <Animated.View style={[s.heroCard, entrance(3)]}>
-          <LinearGradient colors={['#200C00', '#140420', '#07090F']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#280D00', '#1A0830', '#07090F']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} />
           <View style={s.heroBorder} />
+          <View style={s.heroGlow} />
           <View style={s.heroInner}>
             <CircularStreak streak={streak} />
             <View style={s.mascotWrap}>
@@ -232,7 +272,7 @@ export default function HomeScreen() {
                   i === 4 ? s.dayToday :
                   s.dayFuture
                 ]}>
-                  <Text style={s.dayEmoji}>{i < 4 ? '🔥' : i === 4 ? '•' : ''}</Text>
+                  <Text style={s.dayEmoji}>{['🫁','🦵','🦾','💪','·','',''][i]}</Text>
                 </View>
                 <Text style={[s.dayLabel, i === 4 && { color: Colors.secondary }]}>{d}</Text>
               </View>
@@ -318,13 +358,34 @@ const s = StyleSheet.create({
   streakShield: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: Colors.secondaryDim, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
   shieldText: { color: Colors.secondary, fontSize: 11, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
-  quickRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  quickAction: { alignItems: 'center', gap: 6 },
-  quickIconBox: { width: 64, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  quickLabel: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
+  // Today workout card
+  todayCard: { borderRadius: 26, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 18 },
+  todayBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 26, borderWidth: 1, borderColor: 'rgba(61,139,255,0.1)' },
+  todayTop: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14 },
+  todayTag: { color: Colors.secondary, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 5 },
+  todayTitle: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700', marginBottom: 10 },
+  muscleRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  musclePill: { backgroundColor: Colors.surfaceElevated, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.border },
+  musclePillText: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  todayStats: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceElevated, borderRadius: 16, padding: 10, gap: 10 },
+  todayStat: { alignItems: 'center' },
+  todayStatVal: { color: Colors.text, fontSize: 18, fontFamily: 'Syne_700' },
+  todayStatLbl: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase' },
+  todayStatDiv: { width: 1, height: 28, backgroundColor: Colors.border },
+  todayBtn: { height: 46, borderRadius: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, overflow: 'hidden' },
+  todayBtnText: { color: 'white', fontSize: 13, fontFamily: 'Syne_700', letterSpacing: 0.5 },
 
-  heroCard: { height: 230, borderRadius: 32, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: Colors.border },
-  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 32, borderWidth: 1, borderColor: 'rgba(255,92,34,0.12)' },
+  // Quick actions — tall gradient cards
+  quickRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
+  quickCard: { flex: 1, height: 90, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  quickCardInner: { flex: 1, padding: 12, justifyContent: 'space-between' },
+  quickCardEmoji: { fontSize: 20 },
+  quickCardLabel: { color: 'white', fontSize: 12, fontFamily: 'Syne_700' },
+  quickCardSub: { color: 'rgba(255,255,255,0.55)', fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
+
+  heroCard: { height: 240, borderRadius: 32, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,92,34,0.15)' },
+  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 32, borderWidth: 1, borderColor: 'rgba(255,92,34,0.1)' },
+  heroGlow: { position: 'absolute', bottom: -50, left: '25%', width: 160, height: 160, borderRadius: 80, backgroundColor: Colors.primary, opacity: 0.08 },
   heroInner: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 8 },
   streakNum: { color: Colors.text, fontSize: 54, fontFamily: 'Syne_700', lineHeight: 58, textAlign: 'center' },
   streakLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginTop: -2 },
