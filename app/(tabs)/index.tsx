@@ -8,6 +8,101 @@ import { Mascot } from '../../components/Mascot';
 
 const { width } = Dimensions.get('window');
 
+// ── Check-in Banner ────────────────────────────────────────────────────────
+function CheckInBanner() {
+  const [done, setDone] = useState(false);
+  const pulse = useRef(new Animated.Value(1)).current;
+  const pulseOpacity = useRef(new Animated.Value(0.7)).current;
+  const checkScale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (done) return;
+    Animated.loop(
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 1.35, duration: 1000, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1, duration: 1000, useNativeDriver: true }),
+        ]),
+        Animated.sequence([
+          Animated.timing(pulseOpacity, { toValue: 0, duration: 1000, useNativeDriver: true }),
+          Animated.timing(pulseOpacity, { toValue: 0.7, duration: 0, useNativeDriver: true }),
+        ]),
+      ])
+    ).start();
+  }, [done]);
+
+  const handleCheckin = () => {
+    Animated.spring(checkScale, { toValue: 1.2, friction: 3, useNativeDriver: true }).start(() => {
+      Animated.spring(checkScale, { toValue: 1, friction: 4, useNativeDriver: true }).start();
+    });
+    setDone(true);
+  };
+
+  if (done) {
+    return (
+      <View style={ci.doneBanner}>
+        <LinearGradient colors={['#071A10', '#040C08']} style={StyleSheet.absoluteFill} />
+        <View style={[ci.doneBannerBorder]} />
+        <View style={ci.doneLeft}>
+          <Text style={ci.doneTitle}>✅ Check-in Confirmado!</Text>
+          <Text style={ci.doneSub}>+10 XP · Streak protegido · Missões desbloqueadas</Text>
+        </View>
+        <View style={ci.doneBadge}><Text style={ci.doneBadgeText}>🔥 47d</Text></View>
+      </View>
+    );
+  }
+
+  return (
+    <TouchableOpacity onPress={handleCheckin} activeOpacity={0.93} style={ci.banner}>
+      <LinearGradient colors={['#0A2218', '#061610', '#040C08']} style={StyleSheet.absoluteFill} />
+      <View style={ci.bannerBorder} />
+
+      {/* Left: info */}
+      <View style={ci.left}>
+        <Text style={ci.tag}>📍 VOCÊ ESTÁ NA ACADEMIA?</Text>
+        <Text style={ci.title}>Fazer Check-in</Text>
+        <Text style={ci.sub}>Ativa o streak · +10 XP · Desbloqueia missões</Text>
+        <View style={ci.rewardRow}>
+          <View style={ci.rewardPill}><Text style={ci.rewardText}>🔥 Streak</Text></View>
+          <View style={ci.rewardPill}><Text style={ci.rewardText}>⚡ +10 XP</Text></View>
+          <View style={ci.rewardPill}><Text style={ci.rewardText}>🎯 Missões</Text></View>
+        </View>
+      </View>
+
+      {/* Right: pulsing button */}
+      <View style={ci.btnWrap}>
+        <Animated.View style={[ci.pulsRing, { transform: [{ scale: pulse }], opacity: pulseOpacity }]} />
+        <Animated.View style={[ci.btn, { transform: [{ scale: checkScale }] }]}>
+          <LinearGradient colors={[Colors.success, '#059669']} style={[StyleSheet.absoluteFill, { borderRadius: 36 }]} />
+          <Text style={ci.btnEmoji}>📍</Text>
+        </Animated.View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+const ci = StyleSheet.create({
+  banner: { borderRadius: 26, overflow: 'hidden', padding: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 18, borderWidth: 1, borderColor: 'rgba(16,185,129,0.25)', minHeight: 120 },
+  bannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 26, borderWidth: 1.5, borderColor: 'rgba(16,185,129,0.15)' },
+  left: { flex: 1, marginRight: 16 },
+  tag: { color: Colors.success, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 5 },
+  title: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700', marginBottom: 4 },
+  sub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginBottom: 10 },
+  rewardRow: { flexDirection: 'row', gap: 6 },
+  rewardPill: { backgroundColor: Colors.successDim, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  rewardText: { color: Colors.success, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  btnWrap: { width: 72, height: 72, alignItems: 'center', justifyContent: 'center' },
+  pulsRing: { position: 'absolute', width: 72, height: 72, borderRadius: 36, borderWidth: 2.5, borderColor: Colors.success },
+  btn: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  btnEmoji: { fontSize: 28 },
+  doneBanner: { borderRadius: 22, overflow: 'hidden', padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 18, borderWidth: 1, borderColor: Colors.successDim },
+  doneBannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 22, borderWidth: 1, borderColor: 'rgba(16,185,129,0.15)' },
+  doneLeft: { flex: 1 },
+  doneTitle: { color: Colors.success, fontSize: 15, fontFamily: 'Syne_700', marginBottom: 3 },
+  doneSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
+  doneBadge: { backgroundColor: Colors.primaryDim, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  doneBadgeText: { color: Colors.primary, fontSize: 14, fontFamily: 'Syne_700' },
+});
+
 function CircularStreak({ streak }: { streak: number }) {
   const size = 160;
   const trackW = 9;
@@ -227,8 +322,13 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        {/* Forma do Dia */}
+        {/* ── CHECK-IN BANNER (principal) ── */}
         <Animated.View style={entrance(1)}>
+          <CheckInBanner />
+        </Animated.View>
+
+        {/* Forma do Dia */}
+        <Animated.View style={entrance(2)}>
           <FormScore score={82} />
         </Animated.View>
 
@@ -251,8 +351,8 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* Quick Actions */}
-        <Animated.View style={[s.quickRow, entrance(3)]}>
-          <QuickAction icon="📷" label="Check-in" sub="ACADEMIA" gradient={['#064E3B', '#065F46']} />
+        <Animated.View style={[s.quickRow, entrance(4)]}>
+          <QuickAction icon="🔥" label="Treinar" sub="HOJE" gradient={[Colors.primary, '#C2410C']} />
           <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={['#4C1D95', '#6D28D9']} />
           <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={['#78350F', '#92400E']} />
           <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={['#1E3A5F', '#1D4ED8']} />
