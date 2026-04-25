@@ -1,175 +1,157 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MessageSquare, Flame, Trophy, Check, Crown, Heart, Share2 } from 'lucide-react-native';
-import { Mascot } from '../../components/Mascot';
+import { MessageSquare, Share2, Heart } from 'lucide-react-native';
 
-const { width } = Dimensions.get('window');
-
-export default function CommunityScreen() {
-  const [globalProgress, setGlobalProgress] = useState(4250);
-  const globalGoal = 5000;
+function FeedCard({ type, user, title, msg, time, avatar, reactions, me }: any) {
+  const [liked, setLiked] = useState(false);
+  const accentMap: any = {
+    RECORD: { color: Colors.gold, bg: Colors.goldDim },
+    STREAK: { color: Colors.primary, bg: Colors.primaryDim },
+    CHECKIN: { color: Colors.secondary, bg: Colors.secondaryDim },
+  };
+  const { color, bg } = accentMap[type] || accentMap.CHECKIN;
 
   return (
-    <View style={styles.container}>
-      {/* Header HUD Style */}
-      <View style={styles.hudHeader}>
-        <View style={styles.playerInfo}>
-          <View style={styles.lvlCircle}>
-            <Text style={styles.lvlText}>14</Text>
-          </View>
-          <View style={{ gap: 2 }}>
-            <Text style={styles.headerLabel}>COMunidade</Text>
-            <Text style={styles.headerSub}>Academia CapyWorld</Text>
-          </View>
+    <View style={[s.feedCard, me && { borderColor: Colors.secondaryDim }]}>
+      <View style={s.feedTop}>
+        <View style={[s.feedAvatar, { backgroundColor: bg }]}>
+          <Text style={{ fontSize: 20 }}>{avatar}</Text>
         </View>
-        <TouchableOpacity style={styles.giftBtn}>
-           <Text style={{fontSize: 22}}>🎁</Text>
-        </TouchableOpacity>
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <Text style={s.feedUser}>{user} <Text style={s.feedTime}>· {time}</Text></Text>
+          <Text style={[s.feedTitle, { color }]}>{title}</Text>
+        </View>
+        <TouchableOpacity><Share2 size={16} color={Colors.textDim} /></TouchableOpacity>
+      </View>
+      <Text style={s.feedMsg}>{msg}</Text>
+      {!me && reactions && (
+        <View style={s.reactionRow}>
+          <TouchableOpacity onPress={() => setLiked(!liked)} style={[s.reactBtn, liked && { backgroundColor: 'rgba(239,68,68,0.1)' }]}>
+            <Heart size={13} color={liked ? Colors.danger : Colors.textDim} fill={liked ? Colors.danger : 'none'} />
+            <Text style={[s.reactNum, liked && { color: Colors.danger }]}>{reactions.claps + (liked ? 1 : 0)}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.reactBtn}>
+            <Text style={{ fontSize: 13 }}>🔥</Text>
+            <Text style={s.reactNum}>{reactions.fire}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.reactBtn}>
+            <MessageSquare size={13} color={Colors.textDim} />
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+}
+
+export default function CommunityScreen() {
+  const [globalProgress] = useState(4250);
+  const globalGoal = 5000;
+  const pct = Math.round((globalProgress / globalGoal) * 100);
+
+  return (
+    <View style={s.container}>
+      <View style={s.header}>
+        <View>
+          <Text style={s.headerSub}>ACADEMIA CAPYWORLD</Text>
+          <Text style={s.headerTitle}>Comunidade</Text>
+        </View>
+        <TouchableOpacity style={s.giftBtn}><Text style={{ fontSize: 20 }}>🎁</Text></TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* 1. Live Ticker */}
-        <View style={styles.tickerCard}>
-           <View style={styles.tickerDot} />
-           <Text style={styles.tickerText}>Maria R. bateu recorde no Agachamento! · João P. subiu para Liga Ouro ✨</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
+
+        {/* Live ticker */}
+        <View style={s.ticker}>
+          <View style={s.tickerDot} />
+          <Text style={s.tickerText} numberOfLines={1}>
+            Maria R. bateu recorde no Agachamento! · João P. subiu para Liga Ouro ✨
+          </Text>
         </View>
 
-        {/* 2. Global Challenge (Community Goal) */}
-        <View style={styles.sectionHeader}>
-           <Text style={styles.sectionTitle}>DESAFIO GLOBAL DA ACADEMIA</Text>
-        </View>
-        <View style={styles.challengeCard}>
-           <LinearGradient colors={['#102A16', '#0E1A12']} style={StyleSheet.absoluteFill} />
-           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <View style={{flex: 1}}>
-                 <Text style={styles.chTitle}>Inverno de Ferro ❄️</Text>
-                 <Text style={styles.chSub}>Meta: 5.000 treinos coletivos</Text>
-              </View>
-              <Mascot size={70} />
-           </View>
-           <View style={styles.chTrack}>
-              <LinearGradient colors={[Colors.skyBlue, Colors.glowGreen]} start={{x:0, y:0}} end={{x:1, y:0}} style={[styles.chFill, { width: `${(globalProgress/globalGoal)*100}%` }]} />
-           </View>
-           <View style={styles.chFooter}>
-              <Text style={styles.chStats}>{globalProgress} / {globalGoal} treinos</Text>
-              <Text style={styles.chBonus}>Recompensa: +200💎</Text>
-           </View>
-        </View>
-
-        {/* 3. Feed List */}
-        <View style={styles.sectionHeader}>
-           <Text style={styles.sectionTitle}>ATIVIDADE RECENTE</Text>
+        {/* Global Challenge */}
+        <Text style={s.sectionTitle}>DESAFIO GLOBAL</Text>
+        <View style={s.challengeCard}>
+          <LinearGradient colors={['#071A10', '#040F09']} style={StyleSheet.absoluteFill} />
+          <View style={s.challengeCardBorder} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.chTitle}>Inverno de Ferro ❄️</Text>
+              <Text style={s.chSub}>Meta coletiva: {globalGoal.toLocaleString()} treinos</Text>
+            </View>
+            <View style={s.chPctBadge}>
+              <Text style={s.chPct}>{pct}%</Text>
+            </View>
+          </View>
+          <View style={s.chBar}>
+            <LinearGradient colors={[Colors.secondary, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.chFill, { width: `${pct}%` }]} />
+          </View>
+          <View style={s.chFooter}>
+            <Text style={s.chCount}>{globalProgress.toLocaleString()} treinos realizados</Text>
+            <Text style={s.chReward}>Recompensa: +200💎</Text>
+          </View>
         </View>
 
-        <FeedItem 
-          type="RECORD"
-          user="Maria R." 
-          title="Novo Recorde! 🏆" 
-          msg="Bateu 120kg no Agachamento Livre. Superou a meta de 115kg!"
-          time="Há 12 min"
-          avatar="👩‍🚀"
-          reactions={{ claps: 24, fire: 12 }}
+        {/* Activity Feed */}
+        <Text style={s.sectionTitle}>ATIVIDADE RECENTE</Text>
+
+        <FeedCard
+          type="RECORD" user="Maria R." title="Novo Recorde! 🏆"
+          msg="Bateu 120 kg no Agachamento Livre. Superou a meta de 115 kg!"
+          time="12 min" avatar="👩‍🚀" reactions={{ claps: 24, fire: 12 }}
         />
-
-        <FeedItem 
-          type="STREAK"
-          user="João P." 
-          title="Imparável 🔥" 
-          msg="João completou 100 dias seguidos de treino! Ganhou o título 'Lendário'."
-          time="Há 45 min"
-          avatar="🥷"
-          reactions={{ claps: 56, fire: 42 }}
+        <FeedCard
+          type="STREAK" user="João P." title="Imparável 🔥"
+          msg="João completou 100 dias seguidos! Ganhou o título 'Lendário'."
+          time="45 min" avatar="🥷" reactions={{ claps: 56, fire: 42 }}
         />
-
-        <FeedItem 
-          type="CHECKIN"
-          user="Você" 
-          title="Presença Confirmada ✅" 
+        <FeedCard
+          type="CHECKIN" user="Você" title="Presença Confirmada ✅"
           msg="Você acaba de entrar na Academia CapyWorld. Bom treino!"
-          time="Agora"
-          avatar="👤"
-          me
+          time="Agora" avatar="👤" me
         />
 
-        <View style={{height: 100}} />
+        <View style={{ height: 100 }} />
       </ScrollView>
     </View>
   );
 }
 
-function FeedItem({ type, user, title, msg, time, avatar, reactions, me }) {
-  const getColors = () => {
-    if (type === 'RECORD') return [Colors.sunGold, 'rgba(255,168,32,0.1)'];
-    if (type === 'STREAK') return [Colors.lavaOrange, 'rgba(255,125,0,0.1)'];
-    return [Colors.skyBlue, 'rgba(0,229,255,0.1)'];
-  };
+const s = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
+  headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
+  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700', lineHeight: 30 },
+  giftBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  content: { paddingHorizontal: 20, paddingBottom: 110 },
 
-  const [color, bgColor] = getColors();
+  ticker: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14, marginBottom: 24, borderWidth: 1, borderColor: Colors.border },
+  tickerDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.success, marginRight: 10 },
+  tickerText: { color: Colors.secondary, fontSize: 11, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
-  return (
-    <View style={[styles.feedCard, me && styles.feedCardMe]}>
-       <View style={styles.feedTop}>
-          <View style={[styles.avatarBox, { backgroundColor: bgColor }]}>
-             <Text style={{fontSize: 20}}>{avatar}</Text>
-          </View>
-          <View style={{flex: 1, marginLeft: 12}}>
-             <Text style={styles.feedUser}>{user} <Text style={styles.feedTime}>· {time}</Text></Text>
-             <Text style={[styles.feedTitle, { color }]}>{title}</Text>
-          </View>
-          <TouchableOpacity><Share2 size={18} color={Colors.textDim} /></TouchableOpacity>
-       </View>
-       <Text style={styles.feedMsg}>{msg}</Text>
-       {!me && reactions && (
-          <View style={styles.reactionRow}>
-             <TouchableOpacity style={styles.reactBtn}><Text style={styles.reactEmoji}>👏</Text><Text style={styles.reactNum}>{reactions.claps}</Text></TouchableOpacity>
-             <TouchableOpacity style={styles.reactBtn}><Text style={styles.reactEmoji}>🔥</Text><Text style={styles.reactNum}>{reactions.fire}</Text></TouchableOpacity>
-             <TouchableOpacity style={styles.reactBtn}><MessageSquare size={14} color={Colors.textDim} /></TouchableOpacity>
-          </View>
-       )}
-    </View>
-  );
-}
+  sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 12 },
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, paddingTop: 50 },
-  hudHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20 },
-  playerInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  lvlCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.capyBrown, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.1)' },
-  lvlText: { color: Colors.text, fontFamily: 'Fredoka_700Bold', fontSize: 18 },
-  headerLabel: { color: Colors.text, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
-  headerSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
-  giftBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: Colors.cardLight, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: Colors.rim },
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 110 },
-
-  tickerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 16, marginBottom: 20 },
-  tickerDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.glowGreen, marginRight: 10 },
-  tickerText: { color: Colors.skyBlue, fontSize: 10, fontFamily: 'Fredoka_500Medium', flex: 1 },
-
-  sectionHeader: { marginVertical: 15 },
-  sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
-
-  challengeCard: { borderRadius: 32, overflow: 'hidden', padding: 20, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(112, 214, 60, 0.2)' },
-  chTitle: { color: 'white', fontSize: 20, fontFamily: 'Fredoka_700Bold' },
-  chSub: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginTop: 4 },
-  chTrack: { height: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 6, overflow: 'hidden', marginVertical: 15 },
-  chFill: { height: '100%', borderRadius: 6 },
+  challengeCard: { borderRadius: 26, overflow: 'hidden', padding: 22, marginBottom: 28, borderWidth: 1, borderColor: Colors.border },
+  challengeCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 26, borderWidth: 1, borderColor: 'rgba(16,185,129,0.12)' },
+  chTitle: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700', marginBottom: 4 },
+  chSub: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular' },
+  chPctBadge: { backgroundColor: Colors.successDim, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  chPct: { color: Colors.success, fontSize: 16, fontFamily: 'Syne_700' },
+  chBar: { height: 6, backgroundColor: Colors.surface, borderRadius: 3, overflow: 'hidden', marginBottom: 12 },
+  chFill: { height: '100%', borderRadius: 3 },
   chFooter: { flexDirection: 'row', justifyContent: 'space-between' },
-  chStats: { color: Colors.skyBlue, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  chBonus: { color: Colors.sunGold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  chCount: { color: Colors.secondary, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  chReward: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
-  feedCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 32, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 16 },
-  feedCardMe: { borderColor: 'rgba(0,229,255,0.2)', backgroundColor: 'rgba(0,229,255,0.02)' },
-  feedTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  avatarBox: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  feedUser: { color: 'white', fontSize: 14, fontFamily: 'Fredoka_700Bold' },
+  feedCard: { backgroundColor: Colors.surface, borderRadius: 24, padding: 20, borderWidth: 1, borderColor: Colors.border, marginBottom: 14 },
+  feedTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  feedAvatar: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  feedUser: { color: Colors.text, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
   feedTime: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
-  feedTitle: { fontSize: 16, fontFamily: 'Fredoka_700Bold', marginTop: 2 },
-  feedMsg: { color: Colors.textDim, fontSize: 14, fontFamily: 'Fredoka_400Regular', lineHeight: 20, marginBottom: 15 },
-  reactionRow: { flexDirection: 'row', gap: 10 },
-  reactBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.05)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
-  reactEmoji: { fontSize: 14 },
+  feedTitle: { fontSize: 15, fontFamily: 'Syne_700', marginTop: 2 },
+  feedMsg: { color: Colors.textDim, fontSize: 13, fontFamily: 'Fredoka_400Regular', lineHeight: 20, marginBottom: 14 },
+  reactionRow: { flexDirection: 'row', gap: 8 },
+  reactBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.surfaceElevated, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10 },
   reactNum: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
 });

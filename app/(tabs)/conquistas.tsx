@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Colors } from '../../constants/Colors';
-import { Mascot } from '../../components/Mascot';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Trophy, Star, Zap, Flame, Crown, Medal, Check } from 'lucide-react-native';
+import { Trophy, Star, Zap, Crown, Medal, Check, Flame } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -15,167 +14,160 @@ const TITLES = [
   { id: 5, text: '👑 Lendário', unlocked: false },
 ];
 
+function AchievementCard({ icon, title, sub, progress, unlocked, color }: any) {
+  return (
+    <View style={[s.achieveCard, !unlocked && { opacity: 0.5 }]}>
+      <View style={[s.achieveIconBox, { backgroundColor: color + '18' }]}>
+        {icon}
+        {unlocked && (
+          <View style={s.checkSeal}><Check size={10} color="white" strokeWidth={3} /></View>
+        )}
+      </View>
+      <View style={{ flex: 1, marginLeft: 16 }}>
+        <Text style={s.achieveTitle}>{title}</Text>
+        <Text style={s.achieveSub}>{sub}</Text>
+        <View style={s.progressTrack}>
+          <LinearGradient
+            colors={unlocked ? [Colors.success, '#0EA472'] : [color, color]}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+            style={[s.progressFill, { width: `${progress}%` }]}
+          />
+        </View>
+      </View>
+      <Text style={[s.progressPct, { color: unlocked ? Colors.success : color }]}>{progress}%</Text>
+    </View>
+  );
+}
+
 export default function AchievementsScreen() {
   const [selectedTitle, setSelectedTitle] = useState('⚡ Dedicado');
 
+  const groups = [
+    {
+      label: 'LENDÁRIO', color: Colors.gold,
+      items: [
+        { icon: <Crown size={24} color={Colors.gold} />, title: 'Mestre de Tudo', sub: 'Colete todas as insígnias', progress: 10, unlocked: false },
+        { icon: <Crown size={24} color={Colors.gold} />, title: '365 Dias', sub: 'Um ano de consistência', progress: 12, unlocked: false },
+      ]
+    },
+    {
+      label: 'ÉPICO', color: Colors.purple,
+      items: [
+        { icon: <Flame size={24} color={Colors.purple} />, title: 'Força Bruta', sub: 'Levante 100 kg no supino', progress: 72, unlocked: true },
+        { icon: <Medal size={24} color={Colors.purple} />, title: 'Atleta de Elite', sub: 'Chegue à Liga Diamante', progress: 100, unlocked: true },
+      ]
+    },
+    {
+      label: 'RARO', color: Colors.secondary,
+      items: [
+        { icon: <Zap size={24} color={Colors.secondary} />, title: 'Rápido como Raio', sub: 'Check-in antes das 7h', progress: 100, unlocked: true },
+      ]
+    },
+  ];
+
   return (
-    <View style={styles.container}>
-      {/* Header HUD Style */}
-      <View style={styles.hudHeader}>
-        <View style={styles.playerInfo}>
-          <View style={styles.lvlCircle}>
-            <Text style={styles.lvlText}>14</Text>
-          </View>
-          <View style={{ gap: 2 }}>
-             <Text style={styles.headerLabel}>CONQUISTAS</Text>
-             <Text style={styles.headerSub}>4 obtidas · 12 para desbloquear</Text>
-          </View>
+    <View style={s.container}>
+      <View style={s.header}>
+        <View>
+          <Text style={s.headerSub}>PERFIL</Text>
+          <Text style={s.headerTitle}>Conquistas</Text>
         </View>
-        <View style={styles.gemPill}>
-           <Text style={styles.gemText}>💎 48</Text>
+        <View style={s.gemTag}>
+          <Text style={s.gemText}>💎 48</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* 1. Selected Title Section */}
-        <View style={styles.sectionHeader}>
-           <Text style={styles.sectionTitle}>SEU TÍTULO ATUAL</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
+
+        {/* Streak Hero Banner */}
+        <View style={s.heroBanner}>
+          <LinearGradient colors={[Colors.primary, '#C2410C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+          <View style={s.heroLeft}>
+            <Text style={s.heroTag}>META DE LONGO PRAZO</Text>
+            <Text style={s.heroMain}>60 Dias de Fogo</Text>
+            <View style={s.heroBarTrack}>
+              <View style={[s.heroBarFill, { width: '78%' }]} />
+            </View>
+            <Text style={s.heroStat}>47 de 60 dias · 78%</Text>
+          </View>
+          <View style={s.heroRight}>
+            <Text style={{ fontSize: 52 }}>🔥</Text>
+          </View>
         </View>
-        <View style={styles.titleCard}>
-           <LinearGradient colors={['#1A1238', '#13102A']} style={StyleSheet.absoluteFill} />
-           <Text style={styles.titleDisplay}>{selectedTitle}</Text>
+
+        {/* Title Card */}
+        <Text style={s.sectionTitle}>SEU TÍTULO ATUAL</Text>
+        <View style={s.titleCard}>
+          <Text style={s.titleDisplay}>{selectedTitle}</Text>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.titlePicker}>
-           {TITLES.map(title => (
-             <TouchableOpacity 
-               key={title.id} 
-               disabled={!title.unlocked}
-               onPress={() => setSelectedTitle(title.text)}
-               style={[
-                 styles.titlePill, 
-                 selectedTitle === title.text && styles.titlePillActive,
-                 !title.unlocked && styles.titlePillLocked
-               ]}
-             >
-               <Text style={[styles.titlePillText, !title.unlocked && { opacity: 0.3 }]}>{title.text}</Text>
-               {!title.unlocked && <Star size={10} color="rgba(255,255,255,0.2)" />}
-             </TouchableOpacity>
-           ))}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 28 }}>
+          {TITLES.map(t => (
+            <TouchableOpacity
+              key={t.id}
+              disabled={!t.unlocked}
+              onPress={() => setSelectedTitle(t.text)}
+              style={[s.titlePill, selectedTitle === t.text && s.titlePillActive, !t.unlocked && { opacity: 0.35 }]}
+            >
+              <Text style={[s.titlePillText, selectedTitle === t.text && { color: Colors.background }]}>{t.text}</Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
 
-        {/* 2. Streak Progress Hero (HTML style) */}
-        <View style={styles.heroCard}>
-           <LinearGradient colors={[Colors.lavaOrange, Colors.joyPink]} start={{x:0, y:0}} end={{x:1, y:1}} style={StyleSheet.absoluteFill} />
-           <View style={styles.heroContent}>
-              <View style={styles.heroText}>
-                 <Text style={styles.heroSubtitle}>META DE LONGO PRAZO</Text>
-                 <Text style={styles.heroMainTitle}>60 Dias de Fogo</Text>
-                 <View style={styles.heroBarContainer}>
-                    <View style={[styles.heroBarFill, { width: '78%' }]} />
-                 </View>
-                 <Text style={styles.heroStats}>47 de 60 dias (78%)</Text>
-              </View>
-              <Mascot size={100} mood="zen" />
-           </View>
-        </View>
+        {/* Achievement Groups */}
+        {groups.map(group => (
+          <View key={group.label} style={{ marginBottom: 28 }}>
+            <View style={s.groupHeader}>
+              <View style={[s.rarityDot, { backgroundColor: group.color }]} />
+              <Text style={[s.groupLabel, { color: group.color }]}>{group.label}</Text>
+            </View>
+            {group.items.map((item, i) => (
+              <AchievementCard key={i} {...item} color={group.color} />
+            ))}
+          </View>
+        ))}
 
-        {/* 3. Rarities Grid */}
-        <View style={styles.sectionHeader}>
-           <Text style={styles.sectionTitle}>CONQUISTAS POR RARIDADE</Text>
-        </View>
-        
-        {/* Legendary achievements */}
-        <AchievementGroup title="Lendário" color={Colors.sunGold}>
-           <AchievementItem icon={<Crown size={22} color={Colors.sunGold} />} title="Mestre de Tudo" sub="Colete todas as insignias" progress={10} />
-           <AchievementItem icon={<Crown size={22} color={Colors.sunGold} />} title="365 Dias" sub="Um ano de consistência" progress={12} />
-        </AchievementGroup>
-
-        {/* Epic achievements */}
-        <AchievementGroup title="Épico" color={Colors.joyPink}>
-           <AchievementItem icon={<Flame size={22} color={Colors.joyPink} />} title="Força Bruta" sub="Levante 100kg no supino" progress={72} unlocked />
-           <AchievementItem icon={<Medal size={22} color={Colors.joyPink} />} title="Atleta de Elite" sub="Chegue à Liga Diamante" progress={100} unlocked />
-        </AchievementGroup>
-
-        {/* Rare achievements */}
-        <AchievementGroup title="Raro" color={Colors.skyBlue}>
-           <AchievementItem icon={<Zap size={22} color={Colors.skyBlue} />} title="Rápido como Raio" sub="Faça um check-in antes das 7h" progress={100} unlocked />
-        </AchievementGroup>
-
-        <View style={{height: 100}} />
+        <View style={{ height: 100 }} />
       </ScrollView>
     </View>
   );
 }
 
-function AchievementGroup({ title, color, children }) {
-  return (
-    <View style={styles.groupContainer}>
-       <View style={[styles.groupBadge, { backgroundColor: color + '20' }]}>
-          <Text style={[styles.groupTitle, { color }]}>{title.toUpperCase()}</Text>
-       </View>
-       {children}
-    </View>
-  );
-}
+const s = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
+  headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
+  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700', lineHeight: 30 },
+  gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
+  gemText: { color: Colors.gold, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
+  content: { paddingHorizontal: 20, paddingBottom: 110 },
 
-function AchievementItem({ icon, title, sub, progress, unlocked }) {
-  return (
-    <View style={[styles.achieveCard, !unlocked && { opacity: 0.6 }]}>
-       <View style={styles.achieveIcon}>{icon}</View>
-       <View style={{flex: 1, marginLeft: 15}}>
-          <Text style={styles.achieveTitle}>{title}</Text>
-          <Text style={styles.achieveSub}>{sub}</Text>
-          <View style={styles.achieveProgBar}><View style={[styles.achieveProgFill, { width: `${progress}%`, backgroundColor: unlocked ? Colors.glowGreen : Colors.skyBlue }]} /></View>
-       </View>
-       {unlocked && <View style={styles.checkSeal}><Check size={12} color="white" /></View>}
-    </View>
-  );
-}
+  heroBanner: { borderRadius: 28, overflow: 'hidden', padding: 24, flexDirection: 'row', alignItems: 'center', marginBottom: 28 },
+  heroLeft: { flex: 1 },
+  heroRight: {},
+  heroTag: { color: 'rgba(255,255,255,0.7)', fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 6 },
+  heroMain: { color: 'white', fontSize: 24, fontFamily: 'Syne_700', marginBottom: 14 },
+  heroBarTrack: { height: 8, backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: 4, overflow: 'hidden', width: 160, marginBottom: 8 },
+  heroBarFill: { height: '100%', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4 },
+  heroStat: { color: 'rgba(255,255,255,0.75)', fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, paddingTop: 50 },
-  hudHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingHorizontal: 20 },
-  playerInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  lvlCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.capyBrown, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: 'rgba(255,255,255,0.1)' },
-  lvlText: { color: Colors.text, fontFamily: 'Fredoka_700Bold', fontSize: 18 },
-  headerLabel: { color: Colors.text, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
-  headerSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
-  gemPill: { backgroundColor: 'rgba(255,215,0,0.1)', paddingHorizontal: 15, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
-  gemText: { color: Colors.sunGold, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
+  sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 12 },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 110 },
-  
-  sectionHeader: { marginVertical: 15 },
-  sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
+  titleCard: { backgroundColor: Colors.surface, borderRadius: 22, alignItems: 'center', justifyContent: 'center', height: 90, marginBottom: 14, borderWidth: 1, borderColor: Colors.border },
+  titleDisplay: { color: Colors.text, fontSize: 30, fontFamily: 'Syne_700' },
+  titlePill: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: Colors.surface, marginRight: 10, borderWidth: 1, borderColor: Colors.border },
+  titlePillActive: { backgroundColor: Colors.text, borderColor: Colors.text },
+  titlePillText: { color: Colors.textDim, fontSize: 13, fontFamily: 'Fredoka_700Bold' },
 
-  titleCard: { height: 100, borderRadius: 32, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  titleDisplay: { color: 'white', fontSize: 32, fontFamily: 'Fredoka_700Bold' },
-  
-  titlePicker: { marginBottom: 24 },
-  titlePill: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)', marginRight: 10, borderWidth: 1, borderColor: 'transparent' },
-  titlePillActive: { backgroundColor: 'white' },
-  titlePillLocked: { opacity: 0.5 },
-  titlePillText: { fontSize: 14, fontFamily: 'Fredoka_700Bold', color: '#666' },
-  titlePillActiveText: { color: '#000' },
+  groupHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  rarityDot: { width: 8, height: 8, borderRadius: 4 },
+  groupLabel: { fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
 
-  heroCard: { height: 160, borderRadius: 32, overflow: 'hidden', padding: 25, marginBottom: 24 },
-  heroContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 },
-  heroSubtitle: { color: 'rgba(255,255,255,0.7)', fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
-  heroMainTitle: { color: 'white', fontSize: 24, fontFamily: 'Fredoka_700Bold', marginVertical: 4 },
-  heroBarContainer: { height: 10, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 5, width: 140, overflow: 'hidden', marginTop: 10 },
-  heroBarFill: { height: '100%', backgroundColor: 'white', borderRadius: 5 },
-  heroStats: { color: 'white', fontSize: 10, fontFamily: 'Fredoka_700Bold', marginTop: 8 },
-
-  groupContainer: { marginBottom: 24 },
-  groupBadge: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginBottom: 12 },
-  groupTitle: { fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
-
-  achieveCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, padding: 18, marginBottom: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  achieveIcon: { width: 50, height: 50, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.2)', alignItems: 'center', justifyContent: 'center' },
-  achieveTitle: { color: 'white', fontSize: 16, fontFamily: 'Fredoka_700Bold' },
-  achieveSub: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginTop: 2 },
-  achieveProgBar: { height: 6, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 3, marginTop: 10 },
-  achieveProgFill: { height: '100%', borderRadius: 3 },
-  checkSeal: { width: 20, height: 20, borderRadius: 10, backgroundColor: Colors.glowGreen, alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 18, right: 18 },
+  achieveCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 22, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.border },
+  achieveIconBox: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  checkSeal: { position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: 9, backgroundColor: Colors.success, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
+  achieveTitle: { color: Colors.text, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
+  achieveSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 2, marginBottom: 10 },
+  progressTrack: { height: 4, backgroundColor: Colors.border, borderRadius: 2, overflow: 'hidden', width: '100%' },
+  progressFill: { height: '100%', borderRadius: 2 },
+  progressPct: { fontSize: 13, fontFamily: 'Syne_700', marginLeft: 12 },
 });
