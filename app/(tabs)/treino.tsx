@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Plus, Minus, Check, Timer, ChevronRight, Zap, Flame } from 'lucide-react-native';
+import { Plus, Minus, Check, Timer, ChevronRight, Zap, Flame, Play } from 'lucide-react-native';
 import { Colors } from '../../constants/Colors';
 
 const WORKOUT = {
@@ -166,7 +166,8 @@ export default function WorkoutScreen() {
           </View>
 
           {/* CTA */}
-          <TouchableOpacity onPress={allDone ? nextExercise : () => { const i = exSets.findIndex(d => !d); if (i !== -1) toggleSet(i); }} style={[s.ctaBtn, { backgroundColor: allDone ? Colors.secondary : Colors.success }]} activeOpacity={0.87}>
+          <TouchableOpacity onPress={allDone ? nextExercise : () => { const i = exSets.findIndex(d => !d); if (i !== -1) toggleSet(i); }} activeOpacity={0.87} style={s.ctaBtn}>
+            <LinearGradient colors={allDone ? [Colors.secondary,'#1D4ED8'] : [Colors.success,'#059669']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFill} />
             <Text style={s.ctaText}>{allDone ? (exIdx < WORKOUT.exercises.length - 1 ? 'PRÓXIMO EXERCÍCIO →' : '🎉 FINALIZAR TREINO') : `CONCLUIR SÉRIE ${doneCount + 1}`}</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -174,20 +175,20 @@ export default function WorkoutScreen() {
         {/* Rest timer */}
         {resting && (
           <View style={s.restCard}>
-            <LinearGradient colors={['#071A10', '#040C08']} style={[StyleSheet.absoluteFill, { borderRadius: 20 }]} />
-            <View style={s.restTop}>
-              <View>
-                <Text style={s.restTitle}>DESCANSO</Text>
-                <Text style={s.restSub}>Hidrata! Sua capivara aprova 💧</Text>
-              </View>
-              <View style={s.restCircle}><Text style={s.restNum}>{restTime}s</Text></View>
+            <LinearGradient colors={['#071A10', '#040C08']} style={[StyleSheet.absoluteFill, { borderRadius: 22 }]} />
+            <Text style={s.restTitle}>💧 DESCANSO</Text>
+            <Text style={s.restSub}>Hidrata! Próxima série em breve</Text>
+            <View style={s.restCircleBig}>
+              <Text style={s.restNumBig}>{restTime}</Text>
+              <Text style={s.restNumUnit}>seg</Text>
             </View>
             <View style={s.restBarTrack}>
-              <Animated.View style={[s.restBarFill, { width: `${(restTime / 60) * 100}%` }]} />
+              <LinearGradient colors={[Colors.success+'CC', Colors.success+'55']} start={{x:0,y:0}} end={{x:1,y:0}} style={[s.restBarFill, { width: `${(restTime / 60) * 100}%` }]} />
             </View>
             <View style={s.restBtns}>
               <TouchableOpacity onPress={() => setRestTime(t => t + 15)} style={s.restAdjBtn}><Text style={s.restAdjText}>+15s</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => setResting(false)} style={s.skipBtn}><Text style={s.skipText}>PULAR</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setRestTime(t => Math.max(5,t-15))} style={s.restAdjBtn}><Text style={s.restAdjText}>-15s</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setResting(false)} style={s.skipBtn}><LinearGradient colors={[Colors.secondary,'#1D4ED8']} style={[StyleSheet.absoluteFill,{borderRadius:12}]}/><Text style={s.skipText}>PULAR →</Text></TouchableOpacity>
             </View>
           </View>
         )}
@@ -277,22 +278,22 @@ const s = StyleSheet.create({
   stepBtn: { flex: 1, backgroundColor: Colors.surfaceElevated, borderRadius: 10, paddingVertical: 8, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
   stepText: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
 
-  ctaBtn: { borderRadius: 18, paddingVertical: 16, alignItems: 'center' },
+  ctaBtn: { borderRadius: 18, paddingVertical: 16, alignItems: 'center', overflow: 'hidden' },
   ctaText: { color: 'white', fontSize: 15, fontFamily: 'Syne_700', letterSpacing: 0.3 },
 
-  restCard: { borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: Colors.successDim, marginBottom: 20, padding: 18 },
-  restTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
-  restTitle: { color: Colors.success, fontSize: 12, fontFamily: 'Fredoka_700Bold', letterSpacing: 1, marginBottom: 3 },
-  restSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
-  restCircle: { width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.success },
-  restNum: { color: Colors.text, fontSize: 16, fontFamily: 'Syne_700' },
-  restBarTrack: { height: 4, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden', marginBottom: 12 },
-  restBarFill: { height: '100%', backgroundColor: Colors.success, borderRadius: 2 },
-  restBtns: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  restAdjBtn: { backgroundColor: Colors.surfaceElevated, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10, borderWidth: 1, borderColor: Colors.border },
-  restAdjText: { color: Colors.text, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
-  skipBtn: {},
-  skipText: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
+  restCard: { borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: Colors.successDim, marginBottom: 20, padding: 20, alignItems: 'center' },
+  restTitle: { color: Colors.success, fontSize: 11, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 4 },
+  restSub: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginBottom: 18 },
+  restCircleBig: { width: 110, height: 110, borderRadius: 55, borderWidth: 3, borderColor: Colors.success, alignItems: 'center', justifyContent: 'center', marginBottom: 18, backgroundColor: 'rgba(16,185,129,0.07)' },
+  restNumBig: { color: Colors.text, fontSize: 38, fontFamily: 'Syne_700', lineHeight: 42 },
+  restNumUnit: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
+  restBarTrack: { height: 5, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden', marginBottom: 16, width: '100%' },
+  restBarFill: { height: '100%', borderRadius: 3 },
+  restBtns: { flexDirection: 'row', gap: 10, width: '100%' },
+  restAdjBtn: { flex:1, backgroundColor: Colors.surfaceElevated, paddingVertical: 10, borderRadius: 12, alignItems:'center', borderWidth: 1, borderColor: Colors.border },
+  restAdjText: { color: Colors.text, fontSize: 13, fontFamily: 'Fredoka_700Bold' },
+  skipBtn: { flex:1.4, borderRadius:12, overflow:'hidden', paddingVertical:10, alignItems:'center' },
+  skipText: { color: 'white', fontSize: 13, fontFamily: 'Syne_700', letterSpacing: 0.5 },
 
   queueTitle: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 10 },
   queueCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 18, padding: 14, marginBottom: 8, borderWidth: 1, borderColor: Colors.border, opacity: 0.55 },

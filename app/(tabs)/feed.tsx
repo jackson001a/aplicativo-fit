@@ -97,15 +97,23 @@ function FeedCard({ type, user, title, msg, time, avatar, reactions, me }: any) 
 }
 
 function LeagueRow({ pos, name, avatar, xp, streak, color, me }: any) {
+  const maxXp = 890;
   return (
     <View style={[s.leagueRow, me && s.leagueRowMe]}>
       <Text style={[s.leaguePos, { color }]}>{pos}</Text>
       <View style={[s.leagueAvatar, { backgroundColor: color + '20' }]}>
         <Text style={{ fontSize: 14 }}>{avatar}</Text>
       </View>
-      <Text style={[s.leagueName, me && { color: Colors.secondary }]}>{name}</Text>
+      <View style={{ flex: 1, marginLeft: 0 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+          <Text style={[s.leagueName, me && { color: Colors.secondary }]}>{name}</Text>
+          <Text style={[s.leagueXp, me && { color: Colors.secondary }]}>{xp}xp</Text>
+        </View>
+        <View style={s.leagueXpBar}>
+          <LinearGradient colors={me ? [Colors.secondary, Colors.success] : [color + 'AA', color + '44']} start={{x:0,y:0}} end={{x:1,y:0}} style={[s.leagueXpFill, { width: `${(xp/maxXp)*100}%` }]} />
+        </View>
+      </View>
       <Text style={s.leagueStreak}>🔥{streak}</Text>
-      <Text style={[s.leagueXp, me && { color: Colors.secondary }]}>{xp}xp</Text>
     </View>
   );
 }
@@ -147,14 +155,35 @@ export default function CommunityScreen() {
         <View style={s.duelBanner}>
           <LinearGradient colors={['#1A0622', '#0E0316']} style={StyleSheet.absoluteFill} />
           <View style={s.duelBannerBorder} />
-          <Sword size={18} color={Colors.purple} />
-          <View style={{ flex: 1, marginLeft: 12 }}>
-            <Text style={s.duelLabel}>DUELO EM ANDAMENTO</Text>
-            <Text style={s.duelTitle}>João P. está 140 xp à frente!</Text>
-            <Text style={s.duelSub}>Você tem 18h para virar o jogo 💪</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+            <Sword size={16} color={Colors.purple} />
+            <Text style={[s.duelLabel, { marginLeft: 8, marginBottom: 0 }]}>DUELO EM ANDAMENTO</Text>
           </View>
-          <TouchableOpacity style={s.duelBtn}>
-            <Text style={s.duelBtnText}>Atacar</Text>
+          <View style={s.duelVsRow}>
+            <View style={s.duelPlayer}>
+              <Text style={{ fontSize: 26 }}>👤</Text>
+              <Text style={s.duelPlayerName}>Você</Text>
+              <Text style={[s.duelPlayerXp, { color: Colors.secondary }]}>580 xp</Text>
+            </View>
+            <View style={s.duelMid}>
+              <Text style={s.duelVsText}>VS</Text>
+              <Text style={[s.duelSub, { textAlign: 'center', marginTop: 4 }]}>18h restando</Text>
+            </View>
+            <View style={s.duelPlayer}>
+              <Text style={{ fontSize: 26 }}>🥷</Text>
+              <Text style={s.duelPlayerName}>João P.</Text>
+              <Text style={[s.duelPlayerXp, { color: Colors.danger }]}>720 xp</Text>
+            </View>
+          </View>
+          <View style={s.duelBarTrack}>
+            <LinearGradient colors={[Colors.secondary, Colors.secondary + '88']} start={{x:0,y:0}} end={{x:1,y:0}} style={[s.duelBarFill, { width: `${(580/1300)*100}%` }]} />
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+            <Text style={[s.duelLabel, { color: Colors.secondary }]}>580 xp</Text>
+            <Text style={[s.duelLabel, { color: Colors.danger }]}>720 xp</Text>
+          </View>
+          <TouchableOpacity style={[s.duelBtn, { marginTop: 14, alignSelf: 'stretch', justifyContent: 'center' }]}>
+            <Text style={s.duelBtnText}>⚔️ Atacar agora — ganhe +50 XP</Text>
             <ChevronRight size={13} color="white" />
           </TouchableOpacity>
         </View>
@@ -227,13 +256,21 @@ const s = StyleSheet.create({
   tickerDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.danger, marginRight: 10 },
   tickerText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
-  duelBanner: { borderRadius: 22, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', padding: 16, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20, marginBottom: 24 },
-  duelBannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 22, borderWidth: 1, borderColor: 'rgba(139,92,246,0.18)' },
+  duelBanner: { borderRadius: 22, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20, marginBottom: 24 },
+  duelBannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 22, borderWidth: 1, borderColor: 'rgba(139,92,246,0.25)' },
   duelLabel: { color: Colors.purple, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 2 },
+  duelVsRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
+  duelPlayer: { flex: 1, alignItems: 'center', gap: 4 },
+  duelPlayerName: { color: Colors.text, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
+  duelPlayerXp: { fontSize: 18, fontFamily: 'Syne_700' },
+  duelMid: { alignItems: 'center', paddingHorizontal: 12 },
+  duelVsText: { color: Colors.textDim, fontSize: 14, fontFamily: 'Syne_700' },
   duelTitle: { color: Colors.text, fontSize: 14, fontFamily: 'Syne_700' },
   duelSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 2 },
-  duelBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.purple, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12 },
-  duelBtnText: { color: 'white', fontSize: 12, fontFamily: 'Fredoka_700Bold' },
+  duelBarTrack: { height: 8, backgroundColor: 'rgba(239,68,68,0.3)', borderRadius: 4, overflow: 'hidden' },
+  duelBarFill: { height: '100%', borderRadius: 4 },
+  duelBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.purple, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14 },
+  duelBtnText: { color: 'white', fontSize: 12, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 12 },
   sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase', paddingHorizontal: 20, marginBottom: 12 },
@@ -241,14 +278,16 @@ const s = StyleSheet.create({
   countdownText: { color: Colors.danger, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
 
   leagueCard: { backgroundColor: Colors.surface, borderRadius: 24, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', marginHorizontal: 20, marginBottom: 24 },
-  leagueRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 13 },
+  leagueRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 10 },
   leagueRowMe: { backgroundColor: Colors.secondaryDim },
   leagueDivider: { height: 1, backgroundColor: Colors.border, marginHorizontal: 16 },
-  leaguePos: { width: 22, fontSize: 15, fontFamily: 'Syne_700', marginRight: 10 },
-  leagueAvatar: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  leagueName: { flex: 1, color: Colors.text, fontSize: 13, fontFamily: 'Fredoka_700Bold' },
-  leagueStreak: { color: Colors.primary, fontSize: 11, fontFamily: 'Fredoka_700Bold', marginRight: 12 },
-  leagueXp: { color: Colors.textDim, fontSize: 12, fontFamily: 'Syne_700' },
+  leaguePos: { width: 20, fontSize: 14, fontFamily: 'Syne_700' },
+  leagueAvatar: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  leagueName: { color: Colors.text, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
+  leagueXpBar: { height: 4, backgroundColor: Colors.surface, borderRadius: 2, overflow: 'hidden' },
+  leagueXpFill: { height: '100%', borderRadius: 2 },
+  leagueStreak: { color: Colors.primary, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  leagueXp: { color: Colors.textDim, fontSize: 11, fontFamily: 'Syne_700' },
 
   challengeCard: { borderRadius: 26, overflow: 'hidden', padding: 20, marginBottom: 24, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20 },
   challengeBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 26, borderWidth: 1, borderColor: 'rgba(16,185,129,0.1)' },

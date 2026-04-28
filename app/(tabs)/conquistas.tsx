@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -87,10 +87,29 @@ export default function AchievementsScreen() {
         { icon: <Trophy size={24} color={Colors.secondary} />, title: 'Primeira Vitória', sub: 'Vença seu primeiro duelo', progress: 60, unlocked: false },
       ]
     },
+    {
+      label: 'COMUM', color: Colors.success, emoji: '🌱',
+      items: [
+        { icon: <Check size={24} color={Colors.success} />, title: 'Primeiro Check-in', sub: 'Marcou presença pela primeira vez', progress: 100, unlocked: true },
+        { icon: <Flame size={24} color={Colors.success} />, title: '7 Dias Seguidos', sub: 'Mantenha o streak por 1 semana', progress: 100, unlocked: true },
+        { icon: <Medal size={24} color={Colors.success} />, title: 'Hidratado', sub: 'Atingiu meta de água por 7 dias', progress: 71, unlocked: false },
+        { icon: <Trophy size={24} color={Colors.success} />, title: 'Social', sub: 'Reagiu a 10 posts do feed', progress: 40, unlocked: false },
+      ]
+    },
   ];
+
+  const FILTERS = ['Todas', 'Desbloqueadas', 'Bloqueadas'];
+  const [filter, setFilter] = useState('Todas');
+  const filteredGroups = useMemo(() => groups.map(g => ({
+    ...g,
+    items: g.items.filter(i =>
+      filter === 'Todas' ? true : filter === 'Desbloqueadas' ? i.unlocked : !i.unlocked
+    )
+  })).filter(g => g.items.length > 0), [filter]);
 
   const totalUnlocked = groups.reduce((acc, g) => acc + g.items.filter(i => i.unlocked).length, 0);
   const total = groups.reduce((acc, g) => acc + g.items.length, 0);
+
 
   return (
     <View style={s.container}>
@@ -113,33 +132,31 @@ export default function AchievementsScreen() {
           <View style={s.heroLeft}>
             <Text style={s.heroTag}>META DE LONGO PRAZO</Text>
             <Text style={s.heroMain}>60 Dias de Fogo</Text>
-            <View style={s.heroBarTrack}>
-              <View style={[s.heroBarFill, { width: '78%' }]} />
-            </View>
+            <View style={s.heroBarTrack}><View style={[s.heroBarFill, { width: '78%' }]} /></View>
             <Text style={s.heroStat}>47 de 60 dias · 78% completo</Text>
           </View>
           <View style={s.heroRight}>
             <Text style={{ fontSize: 56 }}>🔥</Text>
-            <Text style={s.heroRightSub}>13 dias</Text>
+            <Text style={s.heroRightSub}>13 dias restando</Text>
           </View>
         </View>
 
         {/* Progress overview */}
         <View style={s.progressOverview}>
-          <View style={s.progressItem}>
-            <Text style={s.progressNum}>{totalUnlocked}</Text>
-            <Text style={s.progressLbl}>Desbloqueadas</Text>
-          </View>
+          <View style={s.progressItem}><Text style={s.progressNum}>{totalUnlocked}</Text><Text style={s.progressLbl}>Desbloqueadas</Text></View>
           <View style={s.progressDivider} />
-          <View style={s.progressItem}>
-            <Text style={s.progressNum}>{total - totalUnlocked}</Text>
-            <Text style={s.progressLbl}>Bloqueadas</Text>
-          </View>
+          <View style={s.progressItem}><Text style={s.progressNum}>{total - totalUnlocked}</Text><Text style={s.progressLbl}>Bloqueadas</Text></View>
           <View style={s.progressDivider} />
-          <View style={s.progressItem}>
-            <Text style={[s.progressNum, { color: Colors.gold }]}>{Math.round((totalUnlocked / total) * 100)}%</Text>
-            <Text style={s.progressLbl}>Completadas</Text>
-          </View>
+          <View style={s.progressItem}><Text style={[s.progressNum, { color: Colors.gold }]}>{Math.round((totalUnlocked / total) * 100)}%</Text><Text style={s.progressLbl}>Completadas</Text></View>
+        </View>
+
+        {/* Filter tabs */}
+        <View style={s.filterRow}>
+          {FILTERS.map(f => (
+            <TouchableOpacity key={f} onPress={() => setFilter(f)} style={[s.filterTab, filter === f && s.filterTabActive]}>
+              <Text style={[s.filterTabText, filter === f && { color: Colors.text }]}>{f}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Title Card */}
@@ -169,7 +186,7 @@ export default function AchievementsScreen() {
         </ScrollView>
 
         {/* Achievement Groups */}
-        {groups.map(group => (
+        {filteredGroups.map(group => (
           <View key={group.label} style={{ marginBottom: 28 }}>
             <View style={s.groupHeader}>
               <View style={[s.rarityPill, { backgroundColor: group.color + '20', borderColor: group.color + '40' }]}>
@@ -198,6 +215,10 @@ const s = StyleSheet.create({
   headerRight: { flexDirection: 'row', gap: 8 },
   gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
   gemText: { color: Colors.gold, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
+  filterRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
+  filterTab: { flex: 1, paddingVertical: 9, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
+  filterTabActive: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.borderStrong },
+  filterTabText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
   content: { paddingHorizontal: 20, paddingBottom: 120 },
 
   heroBanner: { borderRadius: 28, overflow: 'hidden', padding: 22, flexDirection: 'row', alignItems: 'center', marginBottom: 16, minHeight: 140 },
