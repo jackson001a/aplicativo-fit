@@ -81,14 +81,15 @@ export default function WorkoutScreen() {
 
   return (
     <View style={s.container}>
+      <View style={s.bgGlow} />
       {/* Header */}
       <View style={s.header}>
         <View>
-          <Text style={s.headerSub}>TREINO ATIVO</Text>
+          <Text style={s.headerSub}>SESSÃO ATIVA</Text>
           <Text style={s.headerTitle}>{WORKOUT.name}</Text>
         </View>
         <View style={s.timerBox}>
-          <Timer size={12} color={Colors.success} />
+          <Timer size={13} color={Colors.success} />
           <Text style={s.timerVal}>{sessionTime}</Text>
         </View>
       </View>
@@ -232,11 +233,12 @@ export default function WorkoutScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  bgGlow: { position: 'absolute', top: -40, right: -60, width: 240, height: 240, borderRadius: 120, backgroundColor: Colors.success, opacity: 0.04 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 12 },
-  headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  headerTitle: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700' },
-  timerBox: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.successDim, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(16,185,129,0.2)' },
-  timerVal: { color: Colors.success, fontSize: 15, fontFamily: 'Syne_700' },
+  headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
+  headerTitle: { color: Colors.text, fontSize: 24, fontFamily: 'Syne_700', letterSpacing: -0.3 },
+  timerBox: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.successDim, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: Colors.success + '30' },
+  timerVal: { color: Colors.success, fontSize: 16, fontFamily: 'Syne_700' },
 
   statsStrip: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 10 },
   stripItem: { flex: 1, alignItems: 'center' },

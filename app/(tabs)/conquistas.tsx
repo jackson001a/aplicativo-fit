@@ -113,6 +113,7 @@ export default function AchievementsScreen() {
 
   return (
     <View style={s.container}>
+      <View style={s.bgGlow} />
       <View style={s.header}>
         <View>
           <Text style={s.headerSub}>PERFIL</Text>
@@ -209,12 +210,13 @@ export default function AchievementsScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  bgGlow: { position: 'absolute', top: -30, right: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: Colors.gold, opacity: 0.05 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
-  headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700', lineHeight: 30 },
+  headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
+  headerTitle: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', lineHeight: 32, letterSpacing: -0.3 },
   headerRight: { flexDirection: 'row', gap: 8 },
-  gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
-  gemText: { color: Colors.gold, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
+  gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 16, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: Colors.gold + '30' },
+  gemText: { color: Colors.gold, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
   filterRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
   filterTab: { flex: 1, paddingVertical: 9, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
   filterTabActive: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.borderStrong },

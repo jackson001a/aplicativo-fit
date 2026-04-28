@@ -125,6 +125,7 @@ export default function CommunityScreen() {
 
   return (
     <View style={s.container}>
+      <View style={s.bgGlow} />
       <View style={s.header}>
         <View>
           <Text style={s.headerSub}>ACADEMIA CAPYWORLD</Text>
@@ -238,11 +239,12 @@ export default function CommunityScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  bgGlow: { position: 'absolute', top: -50, left: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: Colors.purple, opacity: 0.04 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
-  headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700' },
+  headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
+  headerTitle: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', letterSpacing: -0.3 },
   headerActions: { flexDirection: 'row', gap: 8 },
-  iconBtn: { width: 42, height: 42, borderRadius: 13, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  iconBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
   content: { paddingBottom: 120 },
 
   storiesRow: { marginBottom: 16 },

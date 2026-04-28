@@ -441,24 +441,42 @@ export default function HomeScreen() {
 
   return (
     <View style={s.container}>
+      {/* Ambient background glow */}
+      <View style={s.bgGlow1} />
+      <View style={s.bgGlow2} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
 
         {/* Header */}
         <Animated.View style={[s.header, entrance(0)]}>
           <View>
-            <Text style={s.greeting}>Bom dia 👋</Text>
+            <Text style={s.greeting}>Bom dia, atleta 👋</Text>
             <Text style={s.userName}>Capivara</Text>
+            <View style={s.userSubRow}>
+              <View style={s.levelChip}>
+                <Text style={s.levelChipText}>Nível 12</Text>
+              </View>
+              <View style={s.rankChip}>
+                <Text style={s.rankChipText}>⚡ Dedicado</Text>
+              </View>
+            </View>
           </View>
           <View style={s.avatarWrap}>
-            <View style={s.avatar}><Text style={{ fontSize: 22 }}>🐹</Text></View>
+            <View style={s.avatarRing}>
+              <View style={s.avatar}><Text style={{ fontSize: 24 }}>🐹</Text></View>
+            </View>
             <View style={s.levelDot}><Text style={s.levelDotText}>12</Text></View>
           </View>
         </Animated.View>
 
         {/* XP Bar */}
         <Animated.View style={[s.xpBarWrap, entrance(0)]}>
+          <View style={s.xpInfo}>
+            <Text style={s.xpLabel}>XP</Text>
+            <Text style={s.xpCount}>{xp}<Text style={s.xpMax}> / 3000</Text></Text>
+          </View>
           <View style={s.xpBarTrack}>
-            <LinearGradient colors={[Colors.secondary, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpBarFill, { width: `${(xp / 3000) * 100}%` }]} />
+            <LinearGradient colors={[Colors.secondary, Colors.success, Colors.secondary + '88']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpBarFill, { width: `${(xp / 3000) * 100}%` }]} />
+            <View style={[s.xpBarShine, { width: `${(xp / 3000) * 100}%` }]} />
           </View>
           <View style={s.gemPill}>
             <Text style={s.gemText}>💎 {gems}</Text>
@@ -504,8 +522,11 @@ export default function HomeScreen() {
         {/* Week */}
         <Animated.View style={entrance(3)}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>ESTA SEMANA</Text>
-            <Text style={s.sectionSub}>4 de 7 dias ✓</Text>
+            <View style={s.sectionTitleWrap}>
+              <View style={[s.sectionAccent, { backgroundColor: Colors.secondary }]} />
+              <Text style={s.sectionTitle}>ESTA SEMANA</Text>
+            </View>
+            <Text style={s.sectionSub}>4 de 7 treinos ✓</Text>
           </View>
           <View style={s.weekRow}>
             {DAYS.map((d, i) => (
@@ -531,7 +552,10 @@ export default function HomeScreen() {
         {/* Missions */}
         <Animated.View style={entrance(4)}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>MISSÕES</Text>
+            <View style={s.sectionTitleWrap}>
+              <View style={[s.sectionAccent, { backgroundColor: Colors.gold }]} />
+              <Text style={s.sectionTitle}>MISSÕES</Text>
+            </View>
             <Text style={s.sectionSub}>1/3 ✓</Text>
           </View>
           <View style={s.card}>
@@ -578,20 +602,33 @@ export default function HomeScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
+  bgGlow1: { position: 'absolute', top: -60, right: -80, width: 260, height: 260, borderRadius: 130, backgroundColor: Colors.primary, opacity: 0.04 },
+  bgGlow2: { position: 'absolute', top: 180, left: -100, width: 300, height: 300, borderRadius: 150, backgroundColor: Colors.secondary, opacity: 0.035 },
   content: { paddingHorizontal: 20, paddingBottom: 130 },
 
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  greeting: { color: Colors.textDim, fontSize: 13, fontFamily: 'Fredoka_400Regular' },
-  userName: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', lineHeight: 32 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
+  greeting: { color: Colors.textSub, fontSize: 13, fontFamily: 'Fredoka_400Regular', marginBottom: 2 },
+  userName: { color: Colors.text, fontSize: 32, fontFamily: 'Syne_700', lineHeight: 36, letterSpacing: -0.5 },
+  userSubRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
+  levelChip: { backgroundColor: Colors.purpleDim, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.purple + '30' },
+  levelChipText: { color: Colors.purple, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  rankChip: { backgroundColor: Colors.secondaryDim, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.secondary + '30' },
+  rankChipText: { color: Colors.secondary, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
   avatarWrap: { position: 'relative' },
-  avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: Colors.surfaceElevated, borderWidth: 1.5, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
+  avatarRing: { width: 56, height: 56, borderRadius: 28, borderWidth: 2, borderColor: Colors.primary + '50', alignItems: 'center', justifyContent: 'center' },
+  avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
   levelDot: { position: 'absolute', bottom: -4, right: -4, backgroundColor: Colors.purple, width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
   levelDotText: { color: 'white', fontSize: 9, fontFamily: 'Fredoka_700Bold' },
 
-  xpBarWrap: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 18 },
-  xpBarTrack: { flex: 1, height: 5, backgroundColor: Colors.surface, borderRadius: 3, overflow: 'hidden' },
+  xpBarWrap: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  xpInfo: { alignItems: 'center' },
+  xpLabel: { color: Colors.textDim, fontSize: 7, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
+  xpCount: { color: Colors.secondary, fontSize: 12, fontFamily: 'Syne_700' },
+  xpMax: { color: Colors.textDim, fontSize: 10 },
+  xpBarTrack: { flex: 1, height: 6, backgroundColor: Colors.surface, borderRadius: 3, overflow: 'hidden', position: 'relative' },
   xpBarFill: { height: '100%', borderRadius: 3 },
-  gemPill: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
+  xpBarShine: { position: 'absolute', top: 0, left: 0, height: '50%', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 3 },
+  gemPill: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, borderColor: Colors.gold + '30' },
   gemText: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
   formCard: { borderRadius: 24, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 18 },
@@ -642,8 +679,10 @@ const s = StyleSheet.create({
   mascotWrap: { marginBottom: -10 },
 
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  sectionTitle: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase' },
-  sectionSub: { color: Colors.textMuted, fontSize: 10, fontFamily: 'Fredoka_400Regular' },
+  sectionTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sectionAccent: { width: 3, height: 14, borderRadius: 2 },
+  sectionTitle: { color: Colors.textSub, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.8, textTransform: 'uppercase' },
+  sectionSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_400Regular' },
 
   weekRow: { flexDirection: 'row', gap: 5, marginBottom: 22 },
   dayCol: { flex: 1, alignItems: 'center', gap: 5 },
