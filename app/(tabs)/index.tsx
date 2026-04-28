@@ -103,7 +103,149 @@ const ci = StyleSheet.create({
   doneBadgeText: { color: Colors.primary, fontSize: 14, fontFamily: 'Syne_700' },
 });
 
-function CircularStreak({ streak }: { streak: number }) {
+// ── Wellness Section ────────────────────────────────────────────────────────
+function WellnessSection() {
+  const GOAL_WATER = 8; // copos de 250ml
+  const [water, setWater] = useState(3);
+  const [sleep, setSleep] = useState<number | null>(null);
+  const [supps, setSupps] = useState([false, false, false]);
+  const [protein, setProtein] = useState(65);
+  const PROTEIN_GOAL = 150;
+  const SUPPS = ['Protéina 🥣', 'Creatina ⚡', 'Vitamina D ☀️'];
+  const SLEEP_OPTS = [5, 6, 7, 8, 9];
+
+  const toggleSupp = (i: number) => {
+    const next = [...supps];
+    next[i] = !next[i];
+    setSupps(next);
+  };
+
+  const waterPct = water / GOAL_WATER;
+  const waterColor = waterPct >= 1 ? Colors.success : waterPct >= 0.5 ? Colors.secondary : Colors.textDim;
+  const sleepColor = !sleep ? Colors.textDim : sleep >= 7 ? Colors.success : sleep >= 6 ? Colors.gold : Colors.danger;
+  const sleepLabel = !sleep ? '-- h' : sleep >= 8 ? 'Excelente' : sleep >= 7 ? 'Ótimo' : sleep >= 6 ? 'Regular' : 'Insuficiente';
+  const suppsDone = supps.filter(Boolean).length;
+  const proteinPct = Math.min(protein / PROTEIN_GOAL, 1);
+
+  return (
+    <View style={w.section}>
+      <View style={w.header}>
+        <Text style={w.title}>BEM-ESTAR DO DIA</Text>
+        <View style={w.xpPill}><Text style={w.xpText}>+{(water === GOAL_WATER ? 15 : 0) + suppsDone * 5 + (sleep && sleep >= 7 ? 10 : 0)} XP</Text></View>
+      </View>
+
+      {/* Row 1: Água + Sono */}
+      <View style={w.row}>
+
+        {/* Água */}
+        <View style={[w.card, { flex: 1.3 }]}>
+          <LinearGradient colors={['#041824', '#020F18']} style={StyleSheet.absoluteFill} />
+          <View style={w.cardTop}>
+            <Text style={w.cardLabel}>💧 ÁGUA</Text>
+            <Text style={[w.cardVal, { color: waterColor }]}>{water * 250}ml</Text>
+          </View>
+          {/* Glass dots */}
+          <View style={w.glassDots}>
+            {Array.from({ length: GOAL_WATER }).map((_, i) => (
+              <TouchableOpacity key={i} onPress={() => setWater(i + 1)} style={[w.glassDot, i < water && { backgroundColor: Colors.secondary }]} />
+            ))}
+          </View>
+          <View style={w.waterActions}>
+            <TouchableOpacity onPress={() => setWater(v => Math.max(0, v - 1))} style={w.waterBtn}><Text style={w.waterBtnText}>−</Text></TouchableOpacity>
+            <Text style={[w.waterGoal, { color: waterColor }]}>{water}/{GOAL_WATER} copos</Text>
+            <TouchableOpacity onPress={() => setWater(v => Math.min(GOAL_WATER, v + 1))} style={[w.waterBtn, { backgroundColor: Colors.secondaryDim }]}><Text style={[w.waterBtnText, { color: Colors.secondary }]}>+</Text></TouchableOpacity>
+          </View>
+          {water >= GOAL_WATER && <Text style={w.goalReached}>✅ Meta atingida! +15 XP</Text>}
+        </View>
+
+        {/* Sono */}
+        <View style={[w.card, { flex: 1 }]}>
+          <LinearGradient colors={['#0D0A20', '#080616']} style={StyleSheet.absoluteFill} />
+          <Text style={w.cardLabel}>🌙 SONO</Text>
+          <Text style={[w.sleepVal, { color: sleepColor }]}>{sleep ? `${sleep}h` : '--h'}</Text>
+          <Text style={[w.sleepLabel, { color: sleepColor }]}>{sleepLabel}</Text>
+          <View style={w.sleepBtns}>
+            {SLEEP_OPTS.map(h => (
+              <TouchableOpacity key={h} onPress={() => setSleep(h)} style={[w.sleepBtn, sleep === h && { backgroundColor: sleepColor }]}>
+                <Text style={[w.sleepBtnText, sleep === h && { color: 'white' }]}>{h}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* Row 2: Suplementos */}
+      <View style={w.card}>
+        <LinearGradient colors={['#150A1C', '#0C0613']} style={StyleSheet.absoluteFill} />
+        <View style={w.cardTop}>
+          <Text style={w.cardLabel}>💊 SUPLEMENTOS</Text>
+          <Text style={[w.cardVal, { color: suppsDone === 3 ? Colors.success : Colors.textDim }]}>{suppsDone}/3</Text>
+        </View>
+        <View style={w.suppRow}>
+          {SUPPS.map((name, i) => (
+            <TouchableOpacity key={i} onPress={() => toggleSupp(i)} style={[w.suppPill, supps[i] && w.suppPillDone]} activeOpacity={0.8}>
+              <Text style={[w.suppText, supps[i] && { color: Colors.success }]}>{supps[i] ? '✓ ' : ''}{name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Row 3: Proteína */}
+      <View style={w.card}>
+        <LinearGradient colors={['#1A0A06', '#100604']} style={StyleSheet.absoluteFill} />
+        <View style={w.cardTop}>
+          <Text style={w.cardLabel}>🥩 PROTEÍNA</Text>
+          <Text style={[w.cardVal, { color: proteinPct >= 1 ? Colors.success : Colors.gold }]}>{protein}g<Text style={{ fontSize: 11, color: Colors.textDim }}>/{PROTEIN_GOAL}g</Text></Text>
+        </View>
+        <View style={w.protBar}><LinearGradient colors={[Colors.primary, Colors.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[w.protFill, { width: `${proteinPct * 100}%` }]} /></View>
+        <View style={w.protBtns}>
+          {[20, 30, 40].map(g => (
+            <TouchableOpacity key={g} onPress={() => setProtein(v => Math.min(PROTEIN_GOAL, v + g))} style={w.protBtn}>
+              <Text style={w.protBtnText}>+{g}g</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity onPress={() => setProtein(0)} style={[w.protBtn, { borderColor: Colors.dangerDim }]}><Text style={[w.protBtnText, { color: Colors.danger }]}>Reset</Text></TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+const w = StyleSheet.create({
+  section: { marginBottom: 22 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  title: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase' },
+  xpPill: { backgroundColor: Colors.goldDim, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
+  xpText: { color: Colors.gold, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  row: { flexDirection: 'row', gap: 10, marginBottom: 10 },
+  card: { borderRadius: 22, overflow: 'hidden', padding: 16, borderWidth: 1, borderColor: Colors.border, marginBottom: 10 },
+  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  cardLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
+  cardVal: { fontSize: 16, fontFamily: 'Syne_700' },
+  glassDots: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 12 },
+  glassDot: { width: 20, height: 20, borderRadius: 6, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.border },
+  waterActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  waterBtn: { width: 32, height: 32, borderRadius: 10, backgroundColor: Colors.surfaceElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  waterBtnText: { color: Colors.text, fontSize: 18, fontFamily: 'Syne_700', lineHeight: 22 },
+  waterGoal: { fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  goalReached: { color: Colors.success, fontSize: 10, fontFamily: 'Fredoka_700Bold', marginTop: 8, textAlign: 'center' },
+  sleepVal: { fontSize: 32, fontFamily: 'Syne_700', lineHeight: 36 },
+  sleepLabel: { fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5, marginBottom: 10 },
+  sleepBtns: { flexDirection: 'row', gap: 4, flexWrap: 'wrap' },
+  sleepBtn: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.border },
+  sleepBtnText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  suppRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  suppPill: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.border },
+  suppPillDone: { backgroundColor: Colors.successDim, borderColor: 'rgba(16,185,129,0.3)' },
+  suppText: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
+  protBar: { height: 6, backgroundColor: Colors.surfaceElevated, borderRadius: 3, overflow: 'hidden', marginBottom: 12 },
+  protFill: { height: '100%', borderRadius: 3 },
+  protBtns: { flexDirection: 'row', gap: 8 },
+  protBtn: { flex: 1, paddingVertical: 8, borderRadius: 10, backgroundColor: Colors.surfaceElevated, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
+  protBtnText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+});
+
+// ── Circular Streak ──────────────────────────────────────────────────────
+
   const size = 160;
   const trackW = 9;
   const glowW = 20;
@@ -378,6 +520,11 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
+        </Animated.View>
+
+        {/* Bem-estar do Dia */}
+        <Animated.View style={entrance(4)}>
+          <WellnessSection />
         </Animated.View>
 
         {/* Missions */}
