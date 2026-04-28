@@ -246,6 +246,7 @@ const w = StyleSheet.create({
 
 // ── Circular Streak ──────────────────────────────────────────────────────
 
+function CircularStreak({ streak }: { streak: number }) {
   const size = 160;
   const trackW = 9;
   const glowW = 20;
