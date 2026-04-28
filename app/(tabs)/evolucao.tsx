@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -107,143 +107,143 @@ function PRRow({ icon, exercise, weight, date, isNew }: any) {
 }
 
 // ── Goals Section ───────────────────────────────────────────────────────────
-const GOAL_TYPES = [
-  { key: 'emagrecer', label: 'Emagrecer', emoji: '🔥', color: Colors.danger, desc: 'Reduzir peso e gordura' },
-  { key: 'massa', label: 'Ganhar Massa', emoji: '💪', color: Colors.secondary, desc: 'Aumentar músculo' },
-  { key: 'manter', label: 'Manter', emoji: '⚖️', color: Colors.success, desc: 'Manter o shape atual' },
-  { key: 'definicao', label: 'Definição', emoji: '🎯', color: Colors.gold, desc: 'Reduzir gordura, manter massa' },
-];
-
-function GoalProgressBar({ pct, color }: { pct: number; color: string }) {
+function GoalBar({ pct, color }: { pct: number; color: string }) {
+  const safe = Math.min(Math.max(pct, 0), 1);
   return (
     <View style={g.barWrap}>
       <View style={g.barTrack}>
-        <LinearGradient colors={[color + 'CC', color + '55']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[g.barFill, { width: `${Math.min(pct * 100, 100)}%` }]} />
+        <LinearGradient colors={[color + 'CC', color + '55']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+          style={[g.barFill, { width: `${safe * 100}%` }]} />
       </View>
-      <Text style={[g.barPct, { color }]}>{Math.round(Math.min(pct * 100, 100))}%</Text>
+      <Text style={[g.barPct, { color }]}>{Math.round(safe * 100)}%</Text>
     </View>
   );
 }
 
 function GoalsSection() {
-  const [goalType, setGoalType] = useState('emagrecer');
+  // Pre-configured from onboarding: objetivo = Emagrecer
   const [currentWeight, setCurrentWeight] = useState(78.5);
-  const targetWeight = 73.0; const initialWeight = 80.0;
+  const targetWeight = 73.0;
+  const initialWeight = 80.0;
   const currentFat = 18.2; const targetFat = 14.0;
-  const [showLog, setShowLog] = useState(false);
-  const [logInput, setLogInput] = useState('');
   const currentStreak = 47; const streakGoal = 60;
   const currentWeekly = 4; const weeklyGoal = 5;
-  const gt = GOAL_TYPES.find(t => t.key === goalType)!;
-  const isLoss = goalType === 'emagrecer' || goalType === 'definicao';
+  const [showLog, setShowLog] = useState(false);
+  const [logInput, setLogInput] = useState('');
+
   const weightDiff = Math.abs(currentWeight - targetWeight);
   const weightPct = Math.abs(initialWeight - currentWeight) / Math.abs(initialWeight - targetWeight);
-  const weightLabel = (isLoss ? currentWeight <= targetWeight : currentWeight >= targetWeight)
-    ? '✅ Meta atingida!'
-    : `Faltam ${weightDiff.toFixed(1)} kg para ${targetWeight} kg`;
+  const fatPct = (19.0 - currentFat) / (19.0 - targetFat);
+
   const logWeight = () => {
     const val = parseFloat(logInput);
     if (!isNaN(val) && val > 30 && val < 250) setCurrentWeight(val);
     setLogInput(''); setShowLog(false);
   };
+
   return (
     <View style={g.section}>
+      {/* Header */}
       <View style={g.header}>
         <Text style={g.title}>METAS PESSOAIS</Text>
-        <View style={[g.typeBadge, { backgroundColor: gt.color + '22', borderColor: gt.color + '44' }]}>
-          <Text style={[g.typeBadgeText, { color: gt.color }]}>{gt.emoji} {gt.label}</Text>
+        <View style={g.objBadge}>
+          <Text style={g.objEmoji}>🔥</Text>
+          <Text style={g.objLabel}>Emagrecer</Text>
         </View>
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 14 }} contentContainerStyle={{ gap: 8, paddingRight: 4 }}>
-        {GOAL_TYPES.map(t => (
-          <TouchableOpacity key={t.key} onPress={() => setGoalType(t.key)}
-            style={[g.typeChip, goalType === t.key && { backgroundColor: t.color + '22', borderColor: t.color + '55' }]} activeOpacity={0.8}>
-            <Text style={{ fontSize: 16 }}>{t.emoji}</Text>
-            <View>
-              <Text style={[g.typeChipLabel, goalType === t.key && { color: t.color }]}>{t.label}</Text>
-              <Text style={g.typeChipDesc}>{t.desc}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      {/* Weight */}
+
+      {/* Peso */}
       <View style={g.card}>
-        <LinearGradient colors={['#120810', '#0A0608']} style={StyleSheet.absoluteFill} />
+        <LinearGradient colors={['#1A0808', '#0E0404']} style={StyleSheet.absoluteFill} />
         <View style={g.cardTop}>
-          <View>
+          <View style={{ flex: 1 }}>
             <Text style={g.cardLabel}>⚖️ META DE PESO</Text>
             <Text style={g.cardMain}>{currentWeight} kg</Text>
-            <Text style={[g.cardSub, { color: gt.color }]}>{weightLabel}</Text>
+            <Text style={[g.cardSub, { color: Colors.danger }]}>
+              {currentWeight <= targetWeight ? '✅ Meta atingida!' : `Faltam ${weightDiff.toFixed(1)} kg para ${targetWeight} kg`}
+            </Text>
           </View>
-          <View style={g.weightTarget}>
-            <Text style={g.cardLabel}>ALVO</Text>
-            <Text style={[g.cardMain, { color: gt.color, fontSize: 22 }]}>{targetWeight}</Text>
-            <Text style={g.cardLabel}>kg</Text>
+          <View style={g.targetBox}>
+            <Text style={g.targetLabel}>ALVO</Text>
+            <Text style={[g.targetVal, { color: Colors.danger }]}>{targetWeight}</Text>
+            <Text style={g.targetUnit}>kg</Text>
           </View>
         </View>
-        <GoalProgressBar pct={weightPct} color={gt.color} />
-        <View style={g.cardFooter}>
-          <View style={g.miniStat}><Text style={g.miniStatVal}>{isLoss ? '-' : '+'}{Math.abs(initialWeight - currentWeight).toFixed(1)}kg</Text><Text style={g.miniStatLabel}>progresso</Text></View>
-          <View style={g.miniDivider} />
-          <View style={g.miniStat}><Text style={g.miniStatVal}>{weightDiff.toFixed(1)}kg</Text><Text style={g.miniStatLabel}>restando</Text></View>
-          <View style={g.miniDivider} />
-          <View style={g.miniStat}><Text style={g.miniStatVal}>~{Math.ceil(weightDiff / 0.5)}sem</Text><Text style={g.miniStatLabel}>estimado</Text></View>
-          <TouchableOpacity onPress={() => setShowLog(true)} style={[g.logBtn, { borderColor: gt.color + '55' }]}>
-            <Text style={[g.logBtnText, { color: gt.color }]}>+ Registrar</Text>
+        <GoalBar pct={weightPct} color={Colors.danger} />
+        <View style={g.statsRow}>
+          <View style={g.stat}>
+            <Text style={g.statVal}>-{Math.abs(initialWeight - currentWeight).toFixed(1)} kg</Text>
+            <Text style={g.statLabel}>perdidos</Text>
+          </View>
+          <View style={g.statDiv} />
+          <View style={g.stat}>
+            <Text style={g.statVal}>{weightDiff.toFixed(1)} kg</Text>
+            <Text style={g.statLabel}>restando</Text>
+          </View>
+          <View style={g.statDiv} />
+          <View style={g.stat}>
+            <Text style={g.statVal}>~{Math.ceil(weightDiff / 0.5)} sem</Text>
+            <Text style={g.statLabel}>estimado</Text>
+          </View>
+          <TouchableOpacity onPress={() => setShowLog(true)} style={g.logBtn}>
+            <Text style={g.logBtnText}>+ Registrar</Text>
           </TouchableOpacity>
         </View>
       </View>
-      {/* Fat */}
-      {(goalType === 'emagrecer' || goalType === 'definicao') && (
-        <View style={g.card}>
-          <LinearGradient colors={['#131006', '#0C0B04']} style={StyleSheet.absoluteFill} />
-          <View style={g.cardTop}>
-            <View>
-              <Text style={g.cardLabel}>📊 GORDURA CORPORAL</Text>
-              <Text style={g.cardMain}>{currentFat}%</Text>
-              <Text style={[g.cardSub, { color: Colors.gold }]}>Faltam {(currentFat - targetFat).toFixed(1)}% para {targetFat}%</Text>
-            </View>
-            <View style={g.weightTarget}>
-              <Text style={g.cardLabel}>ALVO</Text>
-              <Text style={[g.cardMain, { color: Colors.gold, fontSize: 22 }]}>{targetFat}</Text>
-              <Text style={g.cardLabel}>%</Text>
-            </View>
+
+      {/* Gordura */}
+      <View style={g.card}>
+        <LinearGradient colors={['#131006', '#0C0B04']} style={StyleSheet.absoluteFill} />
+        <View style={g.cardTop}>
+          <View style={{ flex: 1 }}>
+            <Text style={g.cardLabel}>📊 GORDURA CORPORAL</Text>
+            <Text style={g.cardMain}>{currentFat}%</Text>
+            <Text style={[g.cardSub, { color: Colors.gold }]}>
+              Faltam {(currentFat - targetFat).toFixed(1)}% para {targetFat}%
+            </Text>
           </View>
-          <GoalProgressBar pct={(19.0 - currentFat) / (19.0 - targetFat)} color={Colors.gold} />
+          <View style={g.targetBox}>
+            <Text style={g.targetLabel}>ALVO</Text>
+            <Text style={[g.targetVal, { color: Colors.gold }]}>{targetFat}</Text>
+            <Text style={g.targetUnit}>%</Text>
+          </View>
         </View>
-      )}
-      {/* Streak + Weekly */}
-      <View style={{ flexDirection: 'row', gap: 10 }}>
+        <GoalBar pct={fatPct} color={Colors.gold} />
+      </View>
+
+      {/* Streak + Consistência */}
+      <View style={g.smallRow}>
         <View style={[g.smallCard, { flex: 1 }]}>
           <LinearGradient colors={['#180800', '#0E0500']} style={StyleSheet.absoluteFill} />
           <Text style={g.cardLabel}>🔥 STREAK META</Text>
           <Text style={g.smallVal}>{currentStreak}<Text style={g.smallUnit}>/{streakGoal}d</Text></Text>
-          <GoalProgressBar pct={currentStreak / streakGoal} color={Colors.primary} />
+          <GoalBar pct={currentStreak / streakGoal} color={Colors.primary} />
           <Text style={[g.smallSub, { color: Colors.primary }]}>Faltam {streakGoal - currentStreak} dias</Text>
         </View>
         <View style={[g.smallCard, { flex: 1 }]}>
           <LinearGradient colors={['#0A1810', '#050F08']} style={StyleSheet.absoluteFill} />
           <Text style={g.cardLabel}>📅 CONSISTÊNCIA</Text>
-          <Text style={g.smallVal}>{currentWeekly}<Text style={g.smallUnit}>/{weeklyGoal}x</Text></Text>
-          <GoalProgressBar pct={currentWeekly / weeklyGoal} color={Colors.success} />
+          <Text style={g.smallVal}>{currentWeekly}<Text style={g.smallUnit}>/{weeklyGoal}x/sem</Text></Text>
+          <GoalBar pct={currentWeekly / weeklyGoal} color={Colors.success} />
           <Text style={[g.smallSub, { color: Colors.success }]}>{weeklyGoal - currentWeekly} treino restando</Text>
         </View>
       </View>
-      {/* Log modal */}
+
+      {/* Modal registrar peso */}
       <Modal visible={showLog} transparent animationType="fade">
         <View style={g.modalOverlay}>
           <View style={g.modalCard}>
             <LinearGradient colors={['#161024', '#0E0A1A']} style={StyleSheet.absoluteFill} />
             <Text style={g.modalTitle}>Registrar Peso</Text>
             <Text style={[g.cardLabel, { marginBottom: 16, letterSpacing: 0 }]}>Informe seu peso atual em kg</Text>
-            <TextInput style={g.modalInput} value={logInput} onChangeText={setLogInput} keyboardType="decimal-pad"
-              placeholder="Ex: 77.5" placeholderTextColor={Colors.textDim} autoFocus />
+            <TextInput style={g.modalInput} value={logInput} onChangeText={setLogInput}
+              keyboardType="decimal-pad" placeholder="Ex: 77.5" placeholderTextColor={Colors.textDim} autoFocus />
             <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TouchableOpacity onPress={() => setShowLog(false)} style={g.modalBtnCancel}>
+              <TouchableOpacity onPress={() => setShowLog(false)} style={g.modalCancel}>
                 <Text style={{ color: Colors.textDim, fontSize: 13, fontFamily: 'Fredoka_700Bold' }}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={logWeight} style={g.modalBtnSave}>
-                <LinearGradient colors={[Colors.secondary, Colors.success]} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+              <TouchableOpacity onPress={logWeight} style={g.modalSave}>
+                <LinearGradient colors={[Colors.danger, '#B91C1C']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
                 <Text style={{ color: 'white', fontSize: 13, fontFamily: 'Syne_700' }}>Salvar</Text>
               </TouchableOpacity>
             </View>
@@ -255,30 +255,32 @@ function GoalsSection() {
 }
 const g = StyleSheet.create({
   section: { marginBottom: 24 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
   title: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase' },
-  typeBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, borderWidth: 1 },
-  typeBadgeText: { fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  typeChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 16, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border },
-  typeChipLabel: { color: Colors.text, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
-  typeChipDesc: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_400Regular' },
+  objBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(239,68,68,0.12)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)' },
+  objEmoji: { fontSize: 12 },
+  objLabel: { color: Colors.danger, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
   card: { borderRadius: 24, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 12 },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
-  cardLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  cardMain: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', lineHeight: 34, marginTop: 4 },
-  cardSub: { fontSize: 11, fontFamily: 'Fredoka_700Bold', marginTop: 3 },
-  weightTarget: { alignItems: 'center', backgroundColor: Colors.surfaceElevated, borderRadius: 16, padding: 12, borderWidth: 1, borderColor: Colors.border },
-  barWrap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  cardLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 4 },
+  cardMain: { color: Colors.text, fontSize: 30, fontFamily: 'Syne_700', lineHeight: 34 },
+  cardSub: { fontSize: 11, fontFamily: 'Fredoka_700Bold', marginTop: 4 },
+  targetBox: { alignItems: 'center', backgroundColor: Colors.surfaceElevated, borderRadius: 16, padding: 12, borderWidth: 1, borderColor: Colors.border, minWidth: 64 },
+  targetLabel: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 1, marginBottom: 2 },
+  targetVal: { fontSize: 22, fontFamily: 'Syne_700' },
+  targetUnit: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_400Regular', marginTop: 1 },
+  barWrap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
   barTrack: { flex: 1, height: 6, backgroundColor: Colors.surfaceElevated, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 3 },
   barPct: { fontSize: 11, fontFamily: 'Syne_700', width: 34, textAlign: 'right' },
-  cardFooter: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  miniStat: { alignItems: 'center' },
-  miniStatVal: { color: Colors.text, fontSize: 13, fontFamily: 'Syne_700' },
-  miniStatLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_400Regular' },
-  miniDivider: { width: 1, height: 24, backgroundColor: Colors.border },
-  logBtn: { marginLeft: 'auto', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
-  logBtnText: { fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  statsRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  stat: { alignItems: 'center' },
+  statVal: { color: Colors.text, fontSize: 13, fontFamily: 'Syne_700' },
+  statLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_400Regular' },
+  statDiv: { width: 1, height: 26, backgroundColor: Colors.border },
+  logBtn: { marginLeft: 'auto', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(239,68,68,0.4)' },
+  logBtnText: { color: Colors.danger, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  smallRow: { flexDirection: 'row', gap: 10 },
   smallCard: { borderRadius: 22, overflow: 'hidden', padding: 16, borderWidth: 1, borderColor: Colors.border, marginBottom: 12 },
   smallVal: { color: Colors.text, fontSize: 24, fontFamily: 'Syne_700', marginBottom: 4, marginTop: 6 },
   smallUnit: { fontSize: 12, color: Colors.textDim },
@@ -287,8 +289,8 @@ const g = StyleSheet.create({
   modalCard: { width: '100%', borderRadius: 28, overflow: 'hidden', padding: 24, borderWidth: 1, borderColor: Colors.border },
   modalTitle: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700', marginBottom: 6 },
   modalInput: { backgroundColor: Colors.surfaceElevated, borderRadius: 16, padding: 16, color: Colors.text, fontSize: 22, fontFamily: 'Syne_700', borderWidth: 1, borderColor: Colors.borderStrong, marginBottom: 16, textAlign: 'center' },
-  modalBtnCancel: { flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
-  modalBtnSave: { flex: 1, paddingVertical: 14, borderRadius: 14, overflow: 'hidden', alignItems: 'center' },
+  modalCancel: { flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
+  modalSave: { flex: 1, paddingVertical: 14, borderRadius: 14, overflow: 'hidden', alignItems: 'center' },
 });
 
 // ── Main Screen ────────────────────────────────────────────────────────────
