@@ -244,142 +244,130 @@ const w = StyleSheet.create({
   protBtnText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 });
 
-// ── 🔥 INFERNO STREAK CARD ─────────────────────────────────────────────────
-function FireStreakBanner({ streak, mascot }: { streak: number; mascot?: React.ReactNode }) {
-
+// ── 🔥 STREAK RING CARD (elegant) ──────────────────────────────────────────
+function FireStreakBanner({ streak }: { streak: number }) {
   const milestones = [15, 30, 45, 60, 90, 120, 180, 365];
   const next = milestones.find(m => m > streak) || 365;
   const prev = [...milestones].reverse().find(m => m <= streak) || 0;
-  const pct = Math.min((streak - prev) / (next - prev), 1);
+  const pct  = Math.min((streak - prev) / (next - prev), 1);
   const daysLeft = next - streak;
-  const flameDots = Math.min(Math.floor(streak / 10), 7);
 
-  const barAnim   = useRef(new Animated.Value(0)).current;
-  const numAnim   = useRef(new Animated.Value(0.7)).current;
+  const SIZE   = 140;
+  const RADIUS = 56;
+  const STROKE = 9;
+  const CIRC   = 2 * Math.PI * RADIUS;
+
+  const barAnim = useRef(new Animated.Value(0)).current;
+  const scaleIn = useRef(new Animated.Value(0.8)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const glowAnim  = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.spring(numAnim,  { toValue: 1, friction: 5, tension: 60, useNativeDriver: true }),
-      Animated.timing(barAnim,  { toValue: pct, duration: 1400, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
-      Animated.timing(glowAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+      Animated.timing(barAnim, { toValue: pct, duration: 1400, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
+      Animated.spring(scaleIn, { toValue: 1, friction: 6, tension: 60, useNativeDriver: true }),
     ]).start();
     Animated.loop(Animated.sequence([
-      Animated.timing(pulseAnim, { toValue: 1.18, duration: 1100, useNativeDriver: true }),
-      Animated.timing(pulseAnim, { toValue: 1, duration: 1100, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 1.06, duration: 1600, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 1, duration: 1600, useNativeDriver: true }),
     ])).start();
   }, []);
 
-  const barWidth = barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  const dashOffset = barAnim.interpolate({ inputRange: [0, 1], outputRange: [CIRC, 0] });
+  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
   return (
-    <Animated.View style={fs.card}>
-      <LinearGradient
-        colors={['#2A0A00', '#1C0600', '#07020E']}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-      {/* Rim highlight at top */}
-      <View style={fs.rimTop} />
-      {/* Glow blobs */}
-      <Animated.View style={[fs.glow1, { opacity: glowAnim }]} />
-      <View style={fs.glow2} />
+    <View style={fs.card}>
+      <LinearGradient colors={['#110A00', '#0A0608']} style={StyleSheet.absoluteFill} />
+      {/* subtle edge glow */}
+      <View style={fs.edgeGlow} />
 
-      {/* TOP BAR */}
-      <View style={fs.topBar}>
-        <View style={fs.liveChip}>
-          <Animated.View style={[fs.livePulse, { transform: [{ scale: pulseAnim }] }]} />
-          <View style={fs.liveDot} />
-          <Text style={fs.liveText}>STREAK ATIVO</Text>
-        </View>
-        <View style={fs.recordChip}>
-          <Text style={fs.recordEmoji}>🏅</Text>
-          <Text style={fs.recordText}>Recorde: 52d</Text>
-        </View>
-      </View>
+      <View style={fs.inner}>
+        {/* LEFT — SVG Ring */}
+        <Animated.View style={[fs.ringWrap, { transform: [{ scale: scaleIn }] }]}>
+          <Svg width={SIZE} height={SIZE}>
+            <Defs>
+              <SvgGradient id="ringG" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#FF6030" />
+                <Stop offset="100%" stopColor="#FFB830" />
+              </SvgGradient>
+            </Defs>
+            {/* track */}
+            <Circle cx={SIZE/2} cy={SIZE/2} r={RADIUS} stroke="rgba(255,255,255,0.06)" strokeWidth={STROKE} fill="none" />
+            {/* fill */}
+            <AnimatedCircle
+              cx={SIZE/2} cy={SIZE/2} r={RADIUS}
+              stroke="url(#ringG)" strokeWidth={STROKE}
+              strokeDasharray={CIRC} strokeDashoffset={dashOffset}
+              strokeLinecap="round" fill="none"
+              transform={`rotate(-90 ${SIZE/2} ${SIZE/2})`}
+            />
+          </Svg>
+          <View style={fs.ringCenter}>
+            <Animated.Text style={[fs.ringNum, { transform: [{ scale: pulseAnim }] }]}>{streak}</Animated.Text>
+            <Text style={fs.ringLabel}>DIAS</Text>
+          </View>
+        </Animated.View>
 
-      {/* MAIN BODY */}
-      <View style={fs.body}>
-        <View style={fs.leftCol}>
-          <Text style={fs.topFlame}>🔥</Text>
-          <Animated.Text style={[fs.heroNum, { transform: [{ scale: numAnim }] }]}>{streak}</Animated.Text>
-          <Text style={fs.heroLabel}>DIAS DE FOGO</Text>
-          <View style={fs.dotsRow}>
-            {Array(7).fill(0).map((_, i) => (
-              <Text key={i} style={[fs.flameDot, { opacity: i < flameDots ? 1 : 0.15 }]}>🔥</Text>
-            ))}
+        {/* RIGHT — Info */}
+        <View style={fs.info}>
+          <View style={fs.liveChip}>
+            <View style={fs.liveDot} />
+            <Text style={fs.liveText}>STREAK ATIVO</Text>
+          </View>
+          <Text style={fs.infoTitle}>Dias de Fogo</Text>
+          <Text style={fs.infoSub}>Recorde pessoal: <Text style={{ color: Colors.gold }}>52 dias</Text></Text>
+
+          <View style={fs.milestoneBox}>
+            <Trophy size={12} color={Colors.gold} />
+            <Text style={fs.milText}>Marco: <Text style={{ color: Colors.gold, fontFamily: 'Syne_700' }}>{next}d</Text></Text>
+          </View>
+          <Text style={fs.daysLeft}>{daysLeft} dias restantes</Text>
+
+          <View style={fs.miniBarTrack}>
+            <Animated.View style={[fs.miniBarFill, { width: barAnim.interpolate({ inputRange: [0,1], outputRange: ['0%','100%'] }) }]}>
+              <LinearGradient colors={['#FF6030','#FFB830']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFill}/>
+            </Animated.View>
           </View>
         </View>
-        <View style={fs.rightCol}>{mascot}</View>
       </View>
 
-      {/* FOOTER */}
+      {/* Footer */}
       <View style={fs.footer}>
-        <View style={fs.motiveBadge}>
-          <Zap size={11} color={Colors.volt} />
-          <Text style={fs.motiveText}>Você está imparável!</Text>
-        </View>
-        <View style={fs.milRow}>
-          <Text style={fs.milLabel}>🏆 Próximo marco: <Text style={{ color: Colors.trophy }}>{next} dias</Text></Text>
-          <Text style={fs.milDays}>{daysLeft} dias restantes</Text>
-        </View>
-        <View style={fs.barTrack}>
-          <Animated.View style={[fs.barFill, { width: barWidth }]}>
-            <LinearGradient colors={[Colors.flame, '#FF9A00', Colors.trophy]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
-            <View style={fs.barShine} />
-          </Animated.View>
-        </View>
-        <View style={fs.barLabels}>
-          <Text style={fs.barLbl}>{prev === 0 ? 'Início' : `${prev}d`}</Text>
-          <Text style={[fs.barLbl, { color: Colors.trophy }]}>{next}d 🏆</Text>
-        </View>
+        <Zap size={11} color={Colors.volt} />
+        <Text style={fs.footerText}>Você está imparável! Continue assim 💪</Text>
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
 const fs = StyleSheet.create({
-  card: {
-    borderRadius: 28, overflow: 'hidden', marginBottom: 20,
-    borderWidth: 1, borderColor: 'rgba(255,107,44,0.30)',
-    shadowColor: Colors.flame, shadowOpacity: 0.5, shadowRadius: 36, shadowOffset: { width: 0, height: 12 },
-  },
-  rimTop: { position: 'absolute', top: 0, left: 24, right: 24, height: 1, backgroundColor: 'rgba(255,107,44,0.40)', borderRadius: 1 },
-  glow1: { position: 'absolute', top: -50, left: -50, width: 260, height: 260, borderRadius: 130, backgroundColor: Colors.flame, opacity: 0.18 },
-  glow2: { position: 'absolute', bottom: -30, right: -20, width: 170, height: 170, borderRadius: 85, backgroundColor: Colors.trophy, opacity: 0.07 },
-  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 16, marginBottom: 0 },
-  liveChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,107,44,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,107,44,0.3)' },
-  livePulse: { position: 'absolute', left: 9, width: 14, height: 14, borderRadius: 7, backgroundColor: Colors.flame, opacity: 0.28 },
-  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.flame, shadowColor: Colors.flame, shadowOpacity: 1, shadowRadius: 6 },
-  liveText: { color: Colors.flame, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  recordChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,208,0,0.08)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,208,0,0.2)' },
-  recordEmoji: { fontSize: 11 },
-  recordText: { color: Colors.trophy, fontSize: 9, fontFamily: 'Fredoka_700Bold' },
-  body: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 18, paddingBottom: 6 },
-  leftCol: { flex: 1 },
-  topFlame: { fontSize: 34, lineHeight: 40, marginBottom: -8 },
-  heroNum: { fontSize: 96, fontFamily: 'Syne_700', lineHeight: 100, color: '#FFFFFF', textShadowColor: Colors.flame, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 32, letterSpacing: -4 },
-  heroLabel: { color: Colors.flame, fontSize: 12, fontFamily: 'Fredoka_700Bold', letterSpacing: 3.5, textTransform: 'uppercase', marginTop: -4, marginBottom: 10, marginLeft: 2 },
-  dotsRow: { flexDirection: 'row', gap: 4, marginBottom: 2 },
-  flameDot: { fontSize: 15, lineHeight: 20 },
-  rightCol: { marginBottom: -14, marginLeft: 4 },
-  footer: { paddingHorizontal: 18, paddingBottom: 18, paddingTop: 6 },
-  motiveBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.voltDim, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(184,255,0,0.25)', marginBottom: 14 },
-  motiveText: { color: Colors.volt, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  milRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  milLabel: { color: Colors.textSub, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  milDays: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold' },
-  barTrack: { height: 10, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 5, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', marginBottom: 6 },
-  barFill: { height: '100%', borderRadius: 5, overflow: 'hidden', position: 'relative' },
+  card: { borderRadius: 24, overflow: 'hidden', marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,96,48,0.20)' },
+  edgeGlow: { position: 'absolute', top: -40, left: -40, width: 200, height: 200, borderRadius: 100, backgroundColor: '#FF6030', opacity: 0.07 },
+  inner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 12, gap: 18 },
+  ringWrap: { width: 140, height: 140, alignItems: 'center', justifyContent: 'center' },
+  ringCenter: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  ringNum: { color: '#FFFFFF', fontSize: 46, fontFamily: 'Syne_700', lineHeight: 50, letterSpacing: -2, textShadowColor: '#FF6030', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 16 },
+  ringLabel: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginTop: -2 },
+  info: { flex: 1 },
+  liveChip: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FF6030' },
+  liveText: { color: '#FF6030', fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 2 },
+  infoTitle: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700', letterSpacing: -0.5, marginBottom: 2 },
+  infoSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginBottom: 12 },
+  milestoneBox: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 3 },
+  milText: { color: Colors.textSub, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  daysLeft: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_400Regular', marginBottom: 10 },
+  miniBarTrack: { height: 4, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' },
+  miniBarFill: { height: '100%', borderRadius: 2, overflow: 'hidden' },
+  footer: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 20, paddingBottom: 14, paddingTop: 2 },
+  footerText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
   barShine: { position: 'absolute', top: 0, left: 0, right: 0, height: '45%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 5 },
   barLabels: { flexDirection: 'row', justifyContent: 'space-between' },
   barLbl: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
 });
 
-
-
 function FormScore({ score }: { score: number }) {
+
   const fillAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fillAnim, { toValue: score / 100, duration: 1200, easing: Easing.out(Easing.quad), useNativeDriver: false }).start();
@@ -567,9 +555,9 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        {/* 🔥 FIRE STREAK BANNER — above check-in */}
+        {/* 🔥 STREAK RING — above check-in */}
         <Animated.View style={entrance(1)}>
-          <FireStreakBanner streak={streak} mascot={<Mascot size={110} mood="happy" />} />
+          <FireStreakBanner streak={streak} />
         </Animated.View>
 
         {/* ── CHECK-IN BANNER (principal) ── */}
