@@ -303,6 +303,7 @@ function FormScore({ score }: { score: number }) {
   const color = score >= 75 ? Colors.success : score >= 50 ? Colors.gold : Colors.danger;
   return (
     <View style={s.formCard}>
+      <LinearGradient colors={['#100A1E', '#090614']} style={StyleSheet.absoluteFill} />
       <View style={s.formCardBorder} />
       <View style={s.formRow}>
         <View style={{ flex: 1 }}>
@@ -311,8 +312,21 @@ function FormScore({ score }: { score: number }) {
           <Text style={s.formSub}>Consistência alta · Tendência de alta ↑</Text>
         </View>
         <View style={s.formRing}>
-          <Text style={[s.formRingNum, { color }]}>{score}</Text>
-          <Text style={{ color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 }}>pts</Text>
+          <Svg width={64} height={64}>
+            <Defs>
+              <SvgGradient id="formG" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor={color} />
+                <Stop offset="100%" stopColor={color} stopOpacity="0.6" />
+              </SvgGradient>
+            </Defs>
+            <Circle cx={32} cy={32} r={26} stroke="rgba(255,255,255,0.06)" strokeWidth={6} fill="none" />
+            <Animated.Text x="32" y="37" textAnchor="middle" fill={color} fontSize="14" fontWeight="bold">
+              {score}
+            </Animated.Text>
+          </Svg>
+          <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
+            <Text style={[s.formRingNum, { color }]}>{score}</Text>
+          </View>
         </View>
       </View>
       <View style={s.streakShield}>
@@ -350,6 +364,7 @@ function TodayWorkout() {
   const muscles = ['🫁 Peito', '🦾 Tríceps', '💪 Ombro'];
   return (
     <View style={s.todayCard}>
+      <LinearGradient colors={['#0D1829', '#080F1C']} style={StyleSheet.absoluteFill} />
       <View style={s.todayBorder} />
       <View style={s.todayTop}>
         <View style={{ flex: 1 }}>
@@ -616,52 +631,52 @@ const s = StyleSheet.create({
   gemPill: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, borderColor: Colors.gold + '30' },
   gemText: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
-  formCard: { borderRadius: 20, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, marginBottom: 16, overflow: 'hidden' },
-  formCardBorder: { position: 'absolute', top: 0, left: 0, right: 0, height: 3, backgroundColor: Colors.purple, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  formRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, padding: 18, paddingBottom: 0 },
-  formLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 6, textTransform: 'uppercase' },
-  formScore: { fontSize: 42, fontFamily: 'Syne_700', lineHeight: 46, letterSpacing: -1 },
-  formScoreUnit: { fontSize: 16, color: Colors.textDim, fontFamily: 'Syne_700' },
-  formSub: { color: Colors.textSub, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginTop: 3 },
-  formRing: { width: 72, height: 72, position: 'relative', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.surfaceElevated, borderRadius: 20, borderWidth: 1, borderColor: Colors.border },
-  formRingNum: { fontSize: 20, fontFamily: 'Syne_700' },
-  streakShield: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: Colors.secondaryDim, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 0, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, marginTop: 14 },
+  formCard: { borderRadius: 24, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 18 },
+  formCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 24, borderWidth: 1, borderColor: 'rgba(139,92,246,0.12)' },
+  formRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  formLabel: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 4 },
+  formScore: { fontSize: 36, fontFamily: 'Syne_700', lineHeight: 40 },
+  formScoreUnit: { fontSize: 16, color: Colors.textDim },
+  formSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 2 },
+  formRing: { width: 64, height: 64, position: 'relative', alignItems: 'center', justifyContent: 'center' },
+  formRingNum: { fontSize: 18, fontFamily: 'Syne_700' },
+  streakShield: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: Colors.secondaryDim, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
   shieldText: { color: Colors.secondary, fontSize: 11, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
   // Today workout card
-  todayCard: { borderRadius: 20, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border, marginBottom: 16, overflow: 'hidden' },
-  todayBorder: { position: 'absolute', top: 0, left: 0, right: 0, height: 3, backgroundColor: Colors.secondary, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  todayTop: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 16, padding: 18, paddingBottom: 0 },
-  todayTag: { color: Colors.secondary, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 6, textTransform: 'uppercase' },
-  todayTitle: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700', marginBottom: 10, letterSpacing: -0.3 },
+  todayCard: { borderRadius: 26, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 18 },
+  todayBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 26, borderWidth: 1, borderColor: 'rgba(61,139,255,0.1)' },
+  todayTop: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14 },
+  todayTag: { color: Colors.secondary, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 5 },
+  todayTitle: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700', marginBottom: 10 },
   muscleRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
-  musclePill: { backgroundColor: Colors.surfaceElevated, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: Colors.border },
-  musclePillText: { color: Colors.textSub, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  todayStats: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18 },
-  todayStat: { flex: 1, alignItems: 'center', paddingVertical: 12 },
-  todayStatVal: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700', letterSpacing: -0.5 },
-  todayStatLbl: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
-  todayStatDiv: { width: 1, height: 32, backgroundColor: Colors.border },
-  todayBtn: { height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, overflow: 'hidden', margin: 14, borderRadius: 14 },
-  todayBtnText: { color: 'white', fontSize: 14, fontFamily: 'Syne_700', letterSpacing: 0.5 },
+  musclePill: { backgroundColor: Colors.surfaceElevated, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.border },
+  musclePillText: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  todayStats: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceElevated, borderRadius: 16, padding: 10, gap: 10 },
+  todayStat: { alignItems: 'center' },
+  todayStatVal: { color: Colors.text, fontSize: 18, fontFamily: 'Syne_700' },
+  todayStatLbl: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase' },
+  todayStatDiv: { width: 1, height: 28, backgroundColor: Colors.border },
+  todayBtn: { height: 46, borderRadius: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, overflow: 'hidden' },
+  todayBtnText: { color: 'white', fontSize: 13, fontFamily: 'Syne_700', letterSpacing: 0.5 },
 
-  // Quick actions
+  // Quick actions — tall gradient cards
   quickRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
-  quickCard: { flex: 1, height: 100, borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  quickCardInner: { flex: 1, padding: 14, justifyContent: 'space-between' },
-  quickCardEmoji: { fontSize: 22 },
-  quickCardLabel: { color: 'white', fontSize: 13, fontFamily: 'Syne_700', letterSpacing: -0.2 },
-  quickCardSub: { color: 'rgba(255,255,255,0.5)', fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
+  quickCard: { flex: 1, height: 90, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  quickCardInner: { flex: 1, padding: 12, justifyContent: 'space-between' },
+  quickCardEmoji: { fontSize: 20 },
+  quickCardLabel: { color: 'white', fontSize: 12, fontFamily: 'Syne_700' },
+  quickCardSub: { color: 'rgba(255,255,255,0.55)', fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
 
-  heroCard: { height: 200, borderRadius: 24, overflow: 'hidden', marginBottom: 16, borderWidth: 1, borderColor: Colors.primary + '25' },
-  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 24, borderWidth: 1, borderColor: Colors.primary + '15' },
-  heroGlow: { position: 'absolute', bottom: -40, left: '20%', width: 180, height: 180, borderRadius: 90, backgroundColor: Colors.primary, opacity: 0.12 },
-  heroInner: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 28, paddingTop: 4 },
-  streakNum: { color: Colors.text, fontSize: 72, fontFamily: 'Syne_700', lineHeight: 76, textAlign: 'center', letterSpacing: -2 },
-  streakLabel: { color: Colors.textSub, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2.5, textTransform: 'uppercase', textAlign: 'center', marginTop: 2 },
-  milestonePill: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.goldDim, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 12, marginTop: 12, borderWidth: 1, borderColor: Colors.gold + '30' },
-  milestoneText: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  mascotWrap: { marginBottom: -8 },
+  heroCard: { height: 240, borderRadius: 32, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,92,34,0.15)' },
+  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 32, borderWidth: 1, borderColor: 'rgba(255,92,34,0.1)' },
+  heroGlow: { position: 'absolute', bottom: -50, left: '25%', width: 160, height: 160, borderRadius: 80, backgroundColor: Colors.primary, opacity: 0.08 },
+  heroInner: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 8 },
+  streakNum: { color: Colors.text, fontSize: 54, fontFamily: 'Syne_700', lineHeight: 58, textAlign: 'center' },
+  streakLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginTop: -2 },
+  milestonePill: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginTop: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.18)' },
+  milestoneText: { color: Colors.gold, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  mascotWrap: { marginBottom: -10 },
 
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   sectionTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -669,24 +684,24 @@ const s = StyleSheet.create({
   sectionTitle: { color: Colors.textSub, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.8, textTransform: 'uppercase' },
   sectionSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_400Regular' },
 
-  weekRow: { flexDirection: 'row', gap: 6, marginBottom: 22 },
-  dayCol: { flex: 1, alignItems: 'center', gap: 6 },
-  dayDot: { width: '100%', height: 50, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  dayDone: { backgroundColor: Colors.primary + '20', borderWidth: 1.5, borderColor: Colors.primary + '40' },
-  dayToday: { backgroundColor: Colors.secondary + '20', borderWidth: 2, borderColor: Colors.secondary },
+  weekRow: { flexDirection: 'row', gap: 5, marginBottom: 22 },
+  dayCol: { flex: 1, alignItems: 'center', gap: 5 },
+  dayDot: { width: '100%', height: 44, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  dayDone: { backgroundColor: Colors.primaryDim, borderWidth: 1, borderColor: 'rgba(255,92,34,0.22)' },
+  dayToday: { backgroundColor: Colors.secondaryDim, borderWidth: 1.5, borderColor: Colors.secondary },
   dayFuture: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border },
-  dayEmoji: { fontSize: 17 },
-  dayLabel: { color: Colors.textDim, fontSize: 8.5, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
+  dayEmoji: { fontSize: 16 },
+  dayLabel: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.3 },
 
-  card: { backgroundColor: Colors.surface, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', marginBottom: 16 },
-  cardDivider: { height: 1, backgroundColor: Colors.border, marginHorizontal: 18 },
+  card: { backgroundColor: Colors.surface, borderRadius: 24, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', marginBottom: 20 },
+  cardDivider: { height: 1, backgroundColor: Colors.border, marginHorizontal: 16 },
 
-  missionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 15 },
-  missionIconBox: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  missionTitle: { color: Colors.text, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
-  missionSub: { color: Colors.textSub, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginTop: 2 },
-  xpTag: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10 },
-  xpTagText: { fontSize: 12, fontFamily: 'Fredoka_700Bold' },
+  missionRow: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  missionIconBox: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  missionTitle: { color: Colors.text, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
+  missionSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 1 },
+  xpTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 9 },
+  xpTagText: { fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
   leagueRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14 },
   leagueRowMe: { backgroundColor: Colors.secondaryDim },
