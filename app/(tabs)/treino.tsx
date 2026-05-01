@@ -168,7 +168,7 @@ export default function WorkoutScreen() {
 
           {/* CTA */}
           <TouchableOpacity onPress={allDone ? nextExercise : () => { const i = exSets.findIndex(d => !d); if (i !== -1) toggleSet(i); }} activeOpacity={0.87} style={s.ctaBtn}>
-            <LinearGradient colors={allDone ? [Colors.secondary,'#1D4ED8'] : [Colors.success,'#059669']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={allDone ? [Colors.volt, '#6B8C00'] : [Colors.win,'#05A050']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFill} />
             <Text style={s.ctaText}>{allDone ? (exIdx < WORKOUT.exercises.length - 1 ? 'PRÓXIMO EXERCÍCIO →' : '🎉 FINALIZAR TREINO') : `CONCLUIR SÉRIE ${doneCount + 1}`}</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -189,7 +189,7 @@ export default function WorkoutScreen() {
             <View style={s.restBtns}>
               <TouchableOpacity onPress={() => setRestTime(t => t + 15)} style={s.restAdjBtn}><Text style={s.restAdjText}>+15s</Text></TouchableOpacity>
               <TouchableOpacity onPress={() => setRestTime(t => Math.max(5,t-15))} style={s.restAdjBtn}><Text style={s.restAdjText}>-15s</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => setResting(false)} style={s.skipBtn}><LinearGradient colors={[Colors.secondary,'#1D4ED8']} style={[StyleSheet.absoluteFill,{borderRadius:12}]}/><Text style={s.skipText}>PULAR →</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setResting(false)} style={s.skipBtn}><LinearGradient colors={[Colors.volt,'#84cc16']} style={[StyleSheet.absoluteFill,{borderRadius:14}]}/><Text style={s.skipText}>PULAR →</Text></TouchableOpacity>
             </View>
           </View>
         )}
@@ -233,11 +233,11 @@ export default function WorkoutScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
-  bgGlow: { position: 'absolute', top: -40, right: -60, width: 240, height: 240, borderRadius: 120, backgroundColor: Colors.success, opacity: 0.04 },
+  bgGlow: { position: 'absolute', top: -50, right: -60, width: 280, height: 280, borderRadius: 140, backgroundColor: Colors.success, opacity: 0.07 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 12 },
   headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
-  headerTitle: { color: Colors.text, fontSize: 24, fontFamily: 'Syne_700', letterSpacing: -0.3 },
-  timerBox: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.successDim, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, borderWidth: 1, borderColor: Colors.success + '30' },
+  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700', letterSpacing: -0.5 },
+  timerBox: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.successDim, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: Colors.success + '40', shadowColor: Colors.success, shadowOpacity: 0.35, shadowRadius: 10 },
   timerVal: { color: Colors.success, fontSize: 16, fontFamily: 'Syne_700' },
 
   statsStrip: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 10 },
@@ -246,25 +246,25 @@ const s = StyleSheet.create({
   stripLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
   stripDiv: { width: 1, backgroundColor: Colors.border, marginVertical: 4 },
 
-  overallBar: { height: 3, backgroundColor: Colors.surface, marginHorizontal: 20, borderRadius: 2, overflow: 'hidden', marginBottom: 16 },
+  overallBar: { height: 4, backgroundColor: Colors.surface, marginHorizontal: 20, borderRadius: 2, overflow: 'hidden', marginBottom: 16 },
   overallFill: { height: '100%', borderRadius: 2 },
 
   content: { paddingHorizontal: 20, paddingBottom: 140 },
 
-  exCard: { borderRadius: 28, overflow: 'hidden', padding: 22, borderWidth: 1, borderColor: Colors.border, marginBottom: 16 },
-  exCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 28, borderWidth: 1, borderColor: 'rgba(61,139,255,0.09)' },
+  exCard: { borderRadius: 30, overflow: 'hidden', padding: 22, borderWidth: 1, borderColor: 'rgba(56,182,255,0.18)', marginBottom: 16, shadowColor: Colors.secondary, shadowOpacity: 0.15, shadowRadius: 18, shadowOffset: { width: 0, height: 6 } },
+  exCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(56,182,255,0.12)' },
   exTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 22 },
-  exMuscleBox: { width: 54, height: 54, borderRadius: 18, backgroundColor: Colors.surfaceElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  exMuscleBox: { width: 56, height: 56, borderRadius: 20, backgroundColor: Colors.surfaceElevated, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
   exTitle: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700' },
   exMeta: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginTop: 3 },
-  recBadge: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
+  recBadge: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, borderWidth: 1, borderColor: Colors.gold + '30' },
   recText: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
   setsLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 10 },
-  setRow: { flexDirection: 'row', gap: 8, marginBottom: 22 },
-  setDot: { width: 48, height: 48, borderRadius: 15, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
-  setDotDone: { backgroundColor: Colors.success, borderColor: Colors.success },
-  setDotActive: { borderColor: Colors.secondary, borderWidth: 2 },
+  setRow: { flexDirection: 'row', gap: 10, marginBottom: 22 },
+  setDot: { width: 52, height: 52, borderRadius: 17, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: Colors.border },
+  setDotDone: { backgroundColor: Colors.success, borderColor: Colors.success, shadowColor: Colors.success, shadowOpacity: 0.6, shadowRadius: 10 },
+  setDotActive: { borderColor: Colors.secondary, borderWidth: 2.5, shadowColor: Colors.secondary, shadowOpacity: 0.4, shadowRadius: 8 },
   setNum: { color: Colors.textDim, fontSize: 16, fontFamily: 'Syne_700' },
 
   weightSection: { marginBottom: 16 },
@@ -280,21 +280,21 @@ const s = StyleSheet.create({
   stepBtn: { flex: 1, backgroundColor: Colors.surfaceElevated, borderRadius: 10, paddingVertical: 8, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
   stepText: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
 
-  ctaBtn: { borderRadius: 18, paddingVertical: 16, alignItems: 'center', overflow: 'hidden' },
-  ctaText: { color: 'white', fontSize: 15, fontFamily: 'Syne_700', letterSpacing: 0.3 },
+  ctaBtn: { borderRadius: 20, paddingVertical: 18, alignItems: 'center', overflow: 'hidden', shadowColor: Colors.success, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } },
+  ctaText: { color: 'white', fontSize: 15, fontFamily: 'Syne_700', letterSpacing: 0.5 },
 
-  restCard: { borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: Colors.successDim, marginBottom: 20, padding: 20, alignItems: 'center' },
+  restCard: { borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: Colors.successDim, marginBottom: 20, padding: 20, alignItems: 'center', shadowColor: Colors.success, shadowOpacity: 0.2, shadowRadius: 20 },
   restTitle: { color: Colors.success, fontSize: 11, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 4 },
   restSub: { color: Colors.textDim, fontSize: 12, fontFamily: 'Fredoka_400Regular', marginBottom: 18 },
-  restCircleBig: { width: 110, height: 110, borderRadius: 55, borderWidth: 3, borderColor: Colors.success, alignItems: 'center', justifyContent: 'center', marginBottom: 18, backgroundColor: 'rgba(16,185,129,0.07)' },
-  restNumBig: { color: Colors.text, fontSize: 38, fontFamily: 'Syne_700', lineHeight: 42 },
+  restCircleBig: { width: 116, height: 116, borderRadius: 58, borderWidth: 3, borderColor: Colors.success, alignItems: 'center', justifyContent: 'center', marginBottom: 18, backgroundColor: 'rgba(0,232,150,0.09)', shadowColor: Colors.success, shadowOpacity: 0.5, shadowRadius: 14 },
+  restNumBig: { color: Colors.text, fontSize: 40, fontFamily: 'Syne_700', lineHeight: 44 },
   restNumUnit: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular' },
-  restBarTrack: { height: 5, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden', marginBottom: 16, width: '100%' },
+  restBarTrack: { height: 6, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden', marginBottom: 16, width: '100%' },
   restBarFill: { height: '100%', borderRadius: 3 },
   restBtns: { flexDirection: 'row', gap: 10, width: '100%' },
-  restAdjBtn: { flex:1, backgroundColor: Colors.surfaceElevated, paddingVertical: 10, borderRadius: 12, alignItems:'center', borderWidth: 1, borderColor: Colors.border },
+  restAdjBtn: { flex:1, backgroundColor: Colors.surfaceElevated, paddingVertical: 10, borderRadius: 14, alignItems:'center', borderWidth: 1, borderColor: Colors.border },
   restAdjText: { color: Colors.text, fontSize: 13, fontFamily: 'Fredoka_700Bold' },
-  skipBtn: { flex:1.4, borderRadius:12, overflow:'hidden', paddingVertical:10, alignItems:'center' },
+  skipBtn: { flex:1.4, borderRadius:14, overflow:'hidden', paddingVertical:10, alignItems:'center', shadowColor: Colors.secondary, shadowOpacity: 0.5, shadowRadius: 10 },
   skipText: { color: 'white', fontSize: 13, fontFamily: 'Syne_700', letterSpacing: 0.5 },
 
   queueTitle: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 10 },

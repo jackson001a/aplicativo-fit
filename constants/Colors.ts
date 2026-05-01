@@ -1,56 +1,108 @@
+// CapyFit Design System v3 — "Your Gym RPG"
+// Inspirado em: Duolingo (gamificação), Nike Run Club (energia), Strava (social), Habitica (RPG)
+
 export const Colors = {
-  // ── Core backgrounds ─────────────────────────────────────────────────────
-  background:       '#060810',   // deeper midnight
-  surface:          '#0C0F1A',   // rich dark surface
-  surfaceElevated:  '#121828',   // lifted card
-  surfaceGlass:     'rgba(18,24,40,0.7)', // glassmorphism
+  // ── Backgrounds ──────────────────────────────────────────────────────────
+  background:      '#050608',
+  surface:         '#0D1017',
+  surfaceElevated: '#14181F',
+  surfaceGlass:    'rgba(13,16,23,0.85)',
 
   // ── Borders ──────────────────────────────────────────────────────────────
-  border:           'rgba(255,255,255,0.06)',
-  borderStrong:     'rgba(255,255,255,0.13)',
-  borderRim:        'rgba(255,255,255,0.18)', // top highlight rim on cards
+  border:          'rgba(255,255,255,0.06)',
+  borderStrong:    'rgba(255,255,255,0.12)',
+  borderRim:       'rgba(255,255,255,0.18)',
 
-  // ── Brand accent colors ───────────────────────────────────────────────────
-  primary:          '#FF6030',   // warmer, more vibrant orange
-  primaryDim:       'rgba(255,96,48,0.15)',
-  primaryGlow:      'rgba(255,96,48,0.35)',
-  secondary:        '#4D9FFF',   // brighter blue
-  secondaryDim:     'rgba(77,159,255,0.13)',
-  secondaryGlow:    'rgba(77,159,255,0.3)',
-  purple:           '#9B6FFF',   // richer purple
-  purpleDim:        'rgba(155,111,255,0.13)',
-  purpleGlow:       'rgba(155,111,255,0.3)',
-  success:          '#00D68F',   // emerald green
-  successDim:       'rgba(0,214,143,0.12)',
-  successGlow:      'rgba(0,214,143,0.3)',
-  gold:             '#FFB830',   // warmer gold
-  goldDim:          'rgba(255,184,48,0.13)',
-  goldGlow:         'rgba(255,184,48,0.35)',
-  danger:           '#FF4560',   // punchier red
-  dangerDim:        'rgba(255,69,96,0.12)',
+  // ── 🔥 Flame — energia principal ─────────────────────────────────────────
+  flame:           '#FF6B2C',
+  flameDim:        'rgba(255,107,44,0.14)',
+  flameGlow:       'rgba(255,107,44,0.5)',
+
+  // ── ⚡ Volt — XP, progresso, vitória ─────────────────────────────────────
+  volt:            '#B8FF00',
+  voltDim:         'rgba(184,255,0,0.10)',
+  voltGlow:        'rgba(184,255,0,0.45)',
+
+  // ── 💎 Ice — secundário, água, calma ─────────────────────────────────────
+  ice:             '#00C2FF',
+  iceDim:          'rgba(0,194,255,0.10)',
+  iceGlow:         'rgba(0,194,255,0.4)',
+
+  // ── 🔮 Mystic — rank, premium, raro ──────────────────────────────────────
+  mystic:          '#9B5CFF',
+  mysticDim:       'rgba(155,92,255,0.12)',
+  mysticGlow:      'rgba(155,92,255,0.45)',
+
+  // ── 🏆 Trophy — conquistas, ouro ─────────────────────────────────────────
+  trophy:          '#FFD000',
+  trophyDim:       'rgba(255,208,0,0.11)',
+  trophyGlow:      'rgba(255,208,0,0.45)',
+
+  // ── ✅ Win — sucesso, check-in ────────────────────────────────────────────
+  win:             '#00E87B',
+  winDim:          'rgba(0,232,123,0.10)',
+  winGlow:         'rgba(0,232,123,0.4)',
+
+  // ── 🩸 Risk — perigo, urgência ────────────────────────────────────────────
+  risk:            '#FF3355',
+  riskDim:         'rgba(255,51,85,0.10)',
+  riskGlow:        'rgba(255,51,85,0.4)',
+
+  // ── 💖 Heart — social, likes ──────────────────────────────────────────────
+  heart:           '#FF3399',
+  heartDim:        'rgba(255,51,153,0.12)',
 
   // ── Typography ────────────────────────────────────────────────────────────
-  text:             '#EDF0FA',   // slightly brighter white
-  textSub:          '#8A94B0',   // readable secondary
-  textDim:          '#4A5470',   // dim labels
-  textMuted:        '#252D44',
+  text:            '#F0F2FA',
+  textSub:         '#8890A8',
+  textDim:         '#3E4560',
+  textMuted:       '#1A1F2E',
 
-  // ── Depth / shadows ──────────────────────────────────────────────────────
-  depthBlue:        '#1E3A5F',
-  depthGreen:       '#064E3B',
-  depthOrange:      '#7C2D12',
-  depthPurple:      '#4C1D95',
+  // ── COMPAT aliases — para não quebrar imports existentes ──────────────────
+  primary:         '#FF6B2C',
+  primaryDim:      'rgba(255,107,44,0.14)',
+  primaryGlow:     'rgba(255,107,44,0.5)',
+  primaryLight:    '#FF8844',
+  secondary:       '#00C2FF',
+  secondaryDim:    'rgba(0,194,255,0.10)',
+  secondaryGlow:   'rgba(0,194,255,0.4)',
+  purple:          '#9B5CFF',
+  purpleDim:       'rgba(155,92,255,0.12)',
+  purpleGlow:      'rgba(155,92,255,0.45)',
+  success:         '#00E87B',
+  successDim:      'rgba(0,232,123,0.10)',
+  successGlow:     'rgba(0,232,123,0.4)',
+  gold:            '#FFD000',
+  goldDim:         'rgba(255,208,0,0.11)',
+  goldGlow:        'rgba(255,208,0,0.45)',
+  danger:          '#FF3355',
+  dangerDim:       'rgba(255,51,85,0.10)',
+  dangerGlow:      'rgba(255,51,85,0.4)',
+  lime:            '#B8FF00',
+  limeDim:         'rgba(184,255,0,0.10)',
+  limeGlow:        'rgba(184,255,0,0.45)',
 
-  // ── Legacy compat ────────────────────────────────────────────────────────
-  lavaOrange: '#FF6030',
-  skyBlue:    '#4D9FFF',
-  glowGreen:  '#00D68F',
-  sunGold:    '#FFB830',
-  joyPink:    '#FF4DA6',
+  // legacy extras
+  lavaOrange: '#FF6B2C',
+  skyBlue:    '#00C2FF',
+  glowGreen:  '#00E87B',
+  sunGold:    '#FFD000',
+  joyPink:    '#FF3399',
   capyBrown:  '#92613A',
   capyTan:    '#D4A574',
   capyCream:  '#F0E6D8',
-  card:       '#0C0F1A',
-  cardLight:  '#121828',
+  card:       '#0D1017',
+  cardLight:  '#14181F',
   rim:        'rgba(255,255,255,0.12)',
+  depthBlue:  '#071B3A',
+  depthGreen: '#053D2F',
+  depthOrange:'#5C1A00',
+  depthPurple:'#2D0A6E',
+  neonOrange: '#FF6B2C',
+  neonBlue:   '#00C2FF',
+  neonGreen:  '#00E87B',
+  neonPurple: '#9B5CFF',
+  neonPink:   '#FF3399',
+  pink:       '#FF3399',
+  pinkDim:    'rgba(255,51,153,0.12)',
 };

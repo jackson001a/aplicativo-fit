@@ -128,7 +128,7 @@ export default function AchievementsScreen() {
 
         {/* Streak Hero Banner */}
         <View style={s.heroBanner}>
-          <LinearGradient colors={[Colors.primary, '#C2410C', '#7C2D12']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={[Colors.flame, '#E04500', '#5C1A00']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
           <View style={s.heroGlowCircle} />
           <View style={s.heroLeft}>
             <Text style={s.heroTag}>META DE LONGO PRAZO</Text>
@@ -210,31 +210,31 @@ export default function AchievementsScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
-  bgGlow: { position: 'absolute', top: -30, right: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: Colors.gold, opacity: 0.05 },
+  bgGlow: { position: 'absolute', top: -50, right: -60, width: 280, height: 280, borderRadius: 140, backgroundColor: Colors.gold, opacity: 0.08, shadowColor: Colors.gold, shadowOpacity: 0.3, shadowRadius: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
   headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
-  headerTitle: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', lineHeight: 32, letterSpacing: -0.3 },
+  headerTitle: { color: Colors.text, fontSize: 30, fontFamily: 'Syne_700', lineHeight: 34, letterSpacing: -0.5 },
   headerRight: { flexDirection: 'row', gap: 8 },
-  gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 16, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: Colors.gold + '30' },
+  gemTag: { backgroundColor: Colors.goldDim, paddingHorizontal: 16, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: Colors.gold + '50', shadowColor: Colors.gold, shadowOpacity: 0.4, shadowRadius: 10 },
   gemText: { color: Colors.gold, fontSize: 15, fontFamily: 'Fredoka_700Bold' },
   filterRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
-  filterTab: { flex: 1, paddingVertical: 9, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
+  filterTab: { flex: 1, paddingVertical: 10, borderRadius: 16, backgroundColor: Colors.surface, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
   filterTabActive: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.borderStrong },
   filterTabText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
   content: { paddingHorizontal: 20, paddingBottom: 120 },
 
-  heroBanner: { borderRadius: 28, overflow: 'hidden', padding: 22, flexDirection: 'row', alignItems: 'center', marginBottom: 16, minHeight: 140 },
-  heroGlowCircle: { position: 'absolute', right: -30, top: -30, width: 130, height: 130, borderRadius: 65, backgroundColor: 'rgba(255,255,255,0.05)' },
+  heroBanner: { borderRadius: 30, overflow: 'hidden', padding: 24, flexDirection: 'row', alignItems: 'center', marginBottom: 16, minHeight: 148, shadowColor: Colors.primary, shadowOpacity: 0.35, shadowRadius: 22, shadowOffset: { width: 0, height: 8 } },
+  heroGlowCircle: { position: 'absolute', right: -20, top: -20, width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(255,255,255,0.07)' },
   heroLeft: { flex: 1 },
   heroRight: { alignItems: 'center' },
-  heroTag: { color: 'rgba(255,255,255,0.65)', fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 6 },
-  heroMain: { color: 'white', fontSize: 22, fontFamily: 'Syne_700', marginBottom: 12 },
-  heroBarTrack: { height: 7, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
-  heroBarFill: { height: '100%', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4 },
-  heroStat: { color: 'rgba(255,255,255,0.7)', fontSize: 11, fontFamily: 'Fredoka_700Bold' },
-  heroRightSub: { color: 'rgba(255,255,255,0.6)', fontSize: 9, fontFamily: 'Fredoka_700Bold', textAlign: 'center', marginTop: 4 },
+  heroTag: { color: 'rgba(255,255,255,0.7)', fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 6 },
+  heroMain: { color: 'white', fontSize: 24, fontFamily: 'Syne_700', marginBottom: 12 },
+  heroBarTrack: { height: 8, backgroundColor: 'rgba(0,0,0,0.35)', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
+  heroBarFill: { height: '100%', backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 4 },
+  heroStat: { color: 'rgba(255,255,255,0.75)', fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  heroRightSub: { color: 'rgba(255,255,255,0.65)', fontSize: 9, fontFamily: 'Fredoka_700Bold', textAlign: 'center', marginTop: 4 },
 
-  progressOverview: { flexDirection: 'row', backgroundColor: Colors.surface, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, paddingVertical: 14, marginBottom: 24 },
+  progressOverview: { flexDirection: 'row', backgroundColor: Colors.surface, borderRadius: 22, borderWidth: 1, borderColor: Colors.border, paddingVertical: 16, marginBottom: 24 },
   progressItem: { flex: 1, alignItems: 'center' },
   progressNum: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700' },
   progressLbl: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
@@ -256,13 +256,13 @@ const s = StyleSheet.create({
   groupLabel: { fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
   groupCount: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
-  achieveCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 22, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
-  achieveIconBox: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center', position: 'relative' },
-  checkSeal: { position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: 9, backgroundColor: Colors.success, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
+  achieveCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 24, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
+  achieveIconBox: { width: 54, height: 54, borderRadius: 18, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  checkSeal: { position: 'absolute', top: -4, right: -4, width: 20, height: 20, borderRadius: 10, backgroundColor: Colors.success, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background, shadowColor: Colors.success, shadowOpacity: 0.7, shadowRadius: 6 },
   achieveTitle: { color: Colors.text, fontSize: 14, fontFamily: 'Fredoka_700Bold' },
   achieveSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 2, marginBottom: 10 },
-  progressTrack: { height: 4, backgroundColor: Colors.border, borderRadius: 2, overflow: 'hidden', width: '100%' },
-  progressFill: { height: '100%', borderRadius: 2 },
+  progressTrack: { height: 5, backgroundColor: Colors.border, borderRadius: 3, overflow: 'hidden', width: '100%' },
+  progressFill: { height: '100%', borderRadius: 3 },
   progressPct: { fontSize: 13, fontFamily: 'Syne_700', marginLeft: 12 },
   lockIcon: { marginLeft: 12, opacity: 0.5 },
 });

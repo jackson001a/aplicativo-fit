@@ -154,7 +154,7 @@ export default function CommunityScreen() {
 
         {/* Duel banner */}
         <View style={s.duelBanner}>
-          <LinearGradient colors={['#1A0622', '#0E0316']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#1A0622', '#0D0316']} style={StyleSheet.absoluteFill} />
           <View style={s.duelBannerBorder} />
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
             <Sword size={16} color={Colors.purple} />
@@ -216,7 +216,7 @@ export default function CommunityScreen() {
             <View style={s.chPct}><Text style={s.chPctText}>{pct}%</Text></View>
           </View>
           <View style={s.chBar}>
-            <LinearGradient colors={[Colors.secondary, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.chFill, { width: `${pct}%` }]} />
+            <LinearGradient colors={[Colors.ice, Colors.win]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.chFill, { width: `${pct}%` }]} />
           </View>
           <View style={s.chFooter}>
             <Text style={s.chCount}>{globalProgress.toLocaleString()} realizados</Text>
@@ -239,39 +239,39 @@ export default function CommunityScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
-  bgGlow: { position: 'absolute', top: -50, left: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: Colors.purple, opacity: 0.04 },
+  bgGlow: { position: 'absolute', top: -60, left: -100, width: 320, height: 320, borderRadius: 160, backgroundColor: Colors.purple, opacity: 0.07, shadowColor: Colors.purple, shadowOpacity: 0.3, shadowRadius: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
   headerSub: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, marginBottom: 2 },
-  headerTitle: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700', letterSpacing: -0.3 },
+  headerTitle: { color: Colors.text, fontSize: 30, fontFamily: 'Syne_700', letterSpacing: -0.5 },
   headerActions: { flexDirection: 'row', gap: 8 },
-  iconBtn: { width: 42, height: 42, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  iconBtn: { width: 44, height: 44, borderRadius: 16, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
   content: { paddingBottom: 120 },
 
   storiesRow: { marginBottom: 16 },
-  storyItem: { alignItems: 'center', gap: 6, width: 60 },
-  storyRing: { width: 56, height: 56, borderRadius: 18, borderWidth: 2, alignItems: 'center', justifyContent: 'center', position: 'relative' },
-  storyInner: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  storyBadge: { position: 'absolute', top: -5, right: -5, width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
+  storyItem: { alignItems: 'center', gap: 6, width: 64 },
+  storyRing: { width: 58, height: 58, borderRadius: 20, borderWidth: 2.5, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  storyInner: { width: 46, height: 46, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  storyBadge: { position: 'absolute', top: -5, right: -5, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
   storyName: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', textAlign: 'center', textTransform: 'uppercase' },
 
   ticker: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 13, marginBottom: 16, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20 },
   tickerDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.danger, marginRight: 10 },
   tickerText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
-  duelBanner: { borderRadius: 22, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20, marginBottom: 24 },
-  duelBannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 22, borderWidth: 1, borderColor: 'rgba(139,92,246,0.25)' },
+  duelBanner: { borderRadius: 24, overflow: 'hidden', padding: 20, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 20, marginBottom: 24, shadowColor: Colors.purple, shadowOpacity: 0.3, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } },
+  duelBannerBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 24, borderWidth: 1, borderColor: 'rgba(168,85,247,0.3)' },
   duelLabel: { color: Colors.purple, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 2 },
   duelVsRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
   duelPlayer: { flex: 1, alignItems: 'center', gap: 4 },
   duelPlayerName: { color: Colors.text, fontSize: 12, fontFamily: 'Fredoka_700Bold' },
-  duelPlayerXp: { fontSize: 18, fontFamily: 'Syne_700' },
+  duelPlayerXp: { fontSize: 20, fontFamily: 'Syne_700' },
   duelMid: { alignItems: 'center', paddingHorizontal: 12 },
-  duelVsText: { color: Colors.textDim, fontSize: 14, fontFamily: 'Syne_700' },
+  duelVsText: { color: Colors.textSub, fontSize: 16, fontFamily: 'Syne_700', letterSpacing: 2 },
   duelTitle: { color: Colors.text, fontSize: 14, fontFamily: 'Syne_700' },
   duelSub: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 2 },
-  duelBarTrack: { height: 8, backgroundColor: 'rgba(239,68,68,0.3)', borderRadius: 4, overflow: 'hidden' },
-  duelBarFill: { height: '100%', borderRadius: 4 },
-  duelBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.purple, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 14 },
+  duelBarTrack: { height: 9, backgroundColor: 'rgba(255,45,85,0.25)', borderRadius: 5, overflow: 'hidden' },
+  duelBarFill: { height: '100%', borderRadius: 5 },
+  duelBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.purple, paddingHorizontal: 14, paddingVertical: 11, borderRadius: 15, shadowColor: Colors.purple, shadowOpacity: 0.5, shadowRadius: 10 },
   duelBtnText: { color: 'white', fontSize: 12, fontFamily: 'Fredoka_700Bold', flex: 1 },
 
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 12 },

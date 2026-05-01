@@ -41,7 +41,7 @@ function CheckInBanner() {
   if (done) {
     return (
       <View style={ci.doneBanner}>
-        <LinearGradient colors={['#071A10', '#040C08']} style={StyleSheet.absoluteFill} />
+        <LinearGradient colors={['#0A1A08', '#050A04']} style={StyleSheet.absoluteFill} />
         <View style={[ci.doneBannerBorder]} />
         <View style={ci.doneLeft}>
           <Text style={ci.doneTitle}>✅ Check-in Confirmado!</Text>
@@ -54,7 +54,7 @@ function CheckInBanner() {
 
   return (
     <TouchableOpacity onPress={handleCheckin} activeOpacity={0.93} style={ci.banner}>
-      <LinearGradient colors={['#0A2218', '#061610', '#040C08']} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={['#0C2210', '#081208', '#050A04']} style={StyleSheet.absoluteFill} />
       <View style={ci.bannerBorder} />
 
       {/* Left: info */}
@@ -73,7 +73,7 @@ function CheckInBanner() {
       <View style={ci.btnWrap}>
         <Animated.View style={[ci.pulsRing, { transform: [{ scale: pulse }], opacity: pulseOpacity }]} />
         <Animated.View style={[ci.btn, { transform: [{ scale: checkScale }] }]}>
-          <LinearGradient colors={[Colors.success, '#059669']} style={[StyleSheet.absoluteFill, { borderRadius: 36 }]} />
+          <LinearGradient colors={[Colors.win, '#05A050']} style={[StyleSheet.absoluteFill, { borderRadius: 36 }]} />
           <Text style={ci.btnEmoji}>📍</Text>
         </Animated.View>
       </View>
@@ -244,56 +244,140 @@ const w = StyleSheet.create({
   protBtnText: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 });
 
-// ── Circular Streak ──────────────────────────────────────────────────────
+// ── 🔥 INFERNO STREAK CARD ─────────────────────────────────────────────────
+function FireStreakBanner({ streak, mascot }: { streak: number; mascot?: React.ReactNode }) {
 
-function CircularStreak({ streak }: { streak: number }) {
-  const size = 160;
-  const trackW = 9;
-  const glowW = 20;
-  const radius = (size - glowW) / 2;
-  const circ = radius * 2 * Math.PI;
-  const progressAnim = useRef(new Animated.Value(0)).current;
-  const milestones = [15, 30, 45, 60, 100, 180, 365];
+  const milestones = [15, 30, 45, 60, 90, 120, 180, 365];
   const next = milestones.find(m => m > streak) || 365;
   const prev = [...milestones].reverse().find(m => m <= streak) || 0;
-  const progress = Math.min((streak - prev) / (next - prev), 1);
+  const pct = Math.min((streak - prev) / (next - prev), 1);
   const daysLeft = next - streak;
+  const flameDots = Math.min(Math.floor(streak / 10), 7);
+
+  const barAnim   = useRef(new Animated.Value(0)).current;
+  const numAnim   = useRef(new Animated.Value(0.7)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim  = useRef(new Animated.Value(0.5)).current;
+
   useEffect(() => {
-    Animated.timing(progressAnim, { toValue: progress, duration: 1400, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+    Animated.parallel([
+      Animated.spring(numAnim,  { toValue: 1, friction: 5, tension: 60, useNativeDriver: true }),
+      Animated.timing(barAnim,  { toValue: pct, duration: 1400, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
+      Animated.timing(glowAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+    ]).start();
+    Animated.loop(Animated.sequence([
+      Animated.timing(pulseAnim, { toValue: 1.18, duration: 1100, useNativeDriver: true }),
+      Animated.timing(pulseAnim, { toValue: 1, duration: 1100, useNativeDriver: true }),
+    ])).start();
   }, []);
-  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-  const dashOffset = progressAnim.interpolate({ inputRange: [0, 1], outputRange: [circ, 0] });
+
+  const barWidth = barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+
   return (
-    <View style={{ alignItems: 'center' }}>
-      <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-        <Svg width={size} height={size}>
-          <Defs>
-            <SvgGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor={Colors.primary} />
-              <Stop offset="55%" stopColor="#FF8C42" />
-              <Stop offset="100%" stopColor={Colors.gold} />
-            </SvgGradient>
-            <SvgGradient id="gg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor={Colors.primary} stopOpacity="0.2" />
-              <Stop offset="100%" stopColor={Colors.gold} stopOpacity="0.04" />
-            </SvgGradient>
-          </Defs>
-          <Circle cx={size/2} cy={size/2} r={radius + trackW/2} stroke="url(#gg)" strokeWidth={glowW} fill="none" />
-          <Circle cx={size/2} cy={size/2} r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth={trackW} fill="none" />
-          <AnimatedCircle cx={size/2} cy={size/2} r={radius} stroke="url(#fg)" strokeWidth={trackW} strokeDasharray={circ} strokeDashoffset={dashOffset} strokeLinecap="round" fill="none" transform={`rotate(-90 ${size/2} ${size/2})`} />
-        </Svg>
-        <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={s.streakNum}>{streak}</Text>
-          <Text style={s.streakLabel}>dias de fogo</Text>
+    <Animated.View style={fs.card}>
+      <LinearGradient
+        colors={['#2A0A00', '#1C0600', '#07020E']}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {/* Rim highlight at top */}
+      <View style={fs.rimTop} />
+      {/* Glow blobs */}
+      <Animated.View style={[fs.glow1, { opacity: glowAnim }]} />
+      <View style={fs.glow2} />
+
+      {/* TOP BAR */}
+      <View style={fs.topBar}>
+        <View style={fs.liveChip}>
+          <Animated.View style={[fs.livePulse, { transform: [{ scale: pulseAnim }] }]} />
+          <View style={fs.liveDot} />
+          <Text style={fs.liveText}>STREAK ATIVO</Text>
+        </View>
+        <View style={fs.recordChip}>
+          <Text style={fs.recordEmoji}>🏅</Text>
+          <Text style={fs.recordText}>Recorde: 52d</Text>
         </View>
       </View>
-      <View style={s.milestonePill}>
-        <Trophy size={10} color={Colors.gold} />
-        <Text style={s.milestoneText}>{daysLeft}d para {next}</Text>
+
+      {/* MAIN BODY */}
+      <View style={fs.body}>
+        <View style={fs.leftCol}>
+          <Text style={fs.topFlame}>🔥</Text>
+          <Animated.Text style={[fs.heroNum, { transform: [{ scale: numAnim }] }]}>{streak}</Animated.Text>
+          <Text style={fs.heroLabel}>DIAS DE FOGO</Text>
+          <View style={fs.dotsRow}>
+            {Array(7).fill(0).map((_, i) => (
+              <Text key={i} style={[fs.flameDot, { opacity: i < flameDots ? 1 : 0.15 }]}>🔥</Text>
+            ))}
+          </View>
+        </View>
+        <View style={fs.rightCol}>{mascot}</View>
       </View>
-    </View>
+
+      {/* FOOTER */}
+      <View style={fs.footer}>
+        <View style={fs.motiveBadge}>
+          <Zap size={11} color={Colors.volt} />
+          <Text style={fs.motiveText}>Você está imparável!</Text>
+        </View>
+        <View style={fs.milRow}>
+          <Text style={fs.milLabel}>🏆 Próximo marco: <Text style={{ color: Colors.trophy }}>{next} dias</Text></Text>
+          <Text style={fs.milDays}>{daysLeft} dias restantes</Text>
+        </View>
+        <View style={fs.barTrack}>
+          <Animated.View style={[fs.barFill, { width: barWidth }]}>
+            <LinearGradient colors={[Colors.flame, '#FF9A00', Colors.trophy]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
+            <View style={fs.barShine} />
+          </Animated.View>
+        </View>
+        <View style={fs.barLabels}>
+          <Text style={fs.barLbl}>{prev === 0 ? 'Início' : `${prev}d`}</Text>
+          <Text style={[fs.barLbl, { color: Colors.trophy }]}>{next}d 🏆</Text>
+        </View>
+      </View>
+    </Animated.View>
   );
 }
+
+const fs = StyleSheet.create({
+  card: {
+    borderRadius: 28, overflow: 'hidden', marginBottom: 20,
+    borderWidth: 1, borderColor: 'rgba(255,107,44,0.30)',
+    shadowColor: Colors.flame, shadowOpacity: 0.5, shadowRadius: 36, shadowOffset: { width: 0, height: 12 },
+  },
+  rimTop: { position: 'absolute', top: 0, left: 24, right: 24, height: 1, backgroundColor: 'rgba(255,107,44,0.40)', borderRadius: 1 },
+  glow1: { position: 'absolute', top: -50, left: -50, width: 260, height: 260, borderRadius: 130, backgroundColor: Colors.flame, opacity: 0.18 },
+  glow2: { position: 'absolute', bottom: -30, right: -20, width: 170, height: 170, borderRadius: 85, backgroundColor: Colors.trophy, opacity: 0.07 },
+  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 16, marginBottom: 0 },
+  liveChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,107,44,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,107,44,0.3)' },
+  livePulse: { position: 'absolute', left: 9, width: 14, height: 14, borderRadius: 7, backgroundColor: Colors.flame, opacity: 0.28 },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.flame, shadowColor: Colors.flame, shadowOpacity: 1, shadowRadius: 6 },
+  liveText: { color: Colors.flame, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
+  recordChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,208,0,0.08)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,208,0,0.2)' },
+  recordEmoji: { fontSize: 11 },
+  recordText: { color: Colors.trophy, fontSize: 9, fontFamily: 'Fredoka_700Bold' },
+  body: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 18, paddingBottom: 6 },
+  leftCol: { flex: 1 },
+  topFlame: { fontSize: 34, lineHeight: 40, marginBottom: -8 },
+  heroNum: { fontSize: 96, fontFamily: 'Syne_700', lineHeight: 100, color: '#FFFFFF', textShadowColor: Colors.flame, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 32, letterSpacing: -4 },
+  heroLabel: { color: Colors.flame, fontSize: 12, fontFamily: 'Fredoka_700Bold', letterSpacing: 3.5, textTransform: 'uppercase', marginTop: -4, marginBottom: 10, marginLeft: 2 },
+  dotsRow: { flexDirection: 'row', gap: 4, marginBottom: 2 },
+  flameDot: { fontSize: 15, lineHeight: 20 },
+  rightCol: { marginBottom: -14, marginLeft: 4 },
+  footer: { paddingHorizontal: 18, paddingBottom: 18, paddingTop: 6 },
+  motiveBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.voltDim, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(184,255,0,0.25)', marginBottom: 14 },
+  motiveText: { color: Colors.volt, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  milRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  milLabel: { color: Colors.textSub, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  milDays: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold' },
+  barTrack: { height: 10, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 5, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', marginBottom: 6 },
+  barFill: { height: '100%', borderRadius: 5, overflow: 'hidden', position: 'relative' },
+  barShine: { position: 'absolute', top: 0, left: 0, right: 0, height: '45%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 5 },
+  barLabels: { flexDirection: 'row', justifyContent: 'space-between' },
+  barLbl: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
+});
+
+
 
 function FormScore({ score }: { score: number }) {
   const fillAnim = useRef(new Animated.Value(0)).current;
@@ -383,7 +467,7 @@ function TodayWorkout() {
         </View>
       </View>
       <TouchableOpacity style={s.todayBtn} activeOpacity={0.88}>
-        <LinearGradient colors={[Colors.primary, '#C2410C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+        <LinearGradient colors={[Colors.flame, '#E04500', '#8C2200']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
         <Dumbbell size={15} color="white" />
         <Text style={s.todayBtnText}>INICIAR TREINO</Text>
         <ChevronRight size={15} color="white" />
@@ -449,7 +533,7 @@ export default function HomeScreen() {
         {/* Header */}
         <Animated.View style={[s.header, entrance(0)]}>
           <View>
-            <Text style={s.greeting}>Bom dia, atleta 👋</Text>
+            <Text style={s.greeting}>Fala, guerreiro 🔥</Text>
             <Text style={s.userName}>Capivara</Text>
             <View style={s.userSubRow}>
               <View style={s.levelChip}>
@@ -475,7 +559,7 @@ export default function HomeScreen() {
             <Text style={s.xpCount}>{xp}<Text style={s.xpMax}> / 3000</Text></Text>
           </View>
           <View style={s.xpBarTrack}>
-            <LinearGradient colors={[Colors.secondary, Colors.success, Colors.secondary + '88']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpBarFill, { width: `${(xp / 3000) * 100}%` }]} />
+            <LinearGradient colors={[Colors.volt, Colors.ice, Colors.volt + '88']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpBarFill, { width: `${(xp / 3000) * 100}%` }]} />
             <View style={[s.xpBarShine, { width: `${(xp / 3000) * 100}%` }]} />
           </View>
           <View style={s.gemPill}>
@@ -483,27 +567,19 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        {/* ── CHECK-IN BANNER (principal) ── */}
+        {/* 🔥 FIRE STREAK BANNER — above check-in */}
         <Animated.View style={entrance(1)}>
+          <FireStreakBanner streak={streak} mascot={<Mascot size={110} mood="happy" />} />
+        </Animated.View>
+
+        {/* ── CHECK-IN BANNER (principal) ── */}
+        <Animated.View style={entrance(2)}>
           <CheckInBanner />
         </Animated.View>
 
         {/* Forma do Dia */}
-        <Animated.View style={entrance(2)}>
+        <Animated.View style={entrance(3)}>
           <FormScore score={82} />
-        </Animated.View>
-
-        {/* Fire Hero Card — Dias de Fogo */}
-        <Animated.View style={[s.heroCard, entrance(2)]}>
-          <LinearGradient colors={['#280D00', '#1A0830', '#07090F']} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} />
-          <View style={s.heroBorder} />
-          <View style={s.heroGlow} />
-          <View style={s.heroInner}>
-            <CircularStreak streak={streak} />
-            <View style={s.mascotWrap}>
-              <Mascot size={120} mood="happy" />
-            </View>
-          </View>
         </Animated.View>
 
         {/* Treino de Hoje */}
@@ -513,10 +589,10 @@ export default function HomeScreen() {
 
         {/* Quick Actions */}
         <Animated.View style={[s.quickRow, entrance(4)]}>
-          <QuickAction icon="🔥" label="Treinar" sub="HOJE" gradient={[Colors.primary, '#C2410C']} />
-          <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={['#4C1D95', '#6D28D9']} />
-          <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={['#78350F', '#92400E']} />
-          <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={['#1E3A5F', '#1D4ED8']} />
+          <QuickAction icon="🔥" label="Treinar" sub="HOJE" gradient={[Colors.flame, '#8C2200']} />
+          <QuickAction icon="⚔️" label="Duelo" sub="ATIVO" gradient={[Colors.mystic, '#4A0099']} />
+          <QuickAction icon="🏆" label="Liga" sub="2D 14H" gradient={[Colors.trophy, '#8C6A00']} />
+          <QuickAction icon="💎" label="Loja" sub="128 GEMS" gradient={[Colors.ice, '#005F8C']} />
         </Animated.View>
 
         {/* Week */}
@@ -602,34 +678,34 @@ export default function HomeScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
-  bgGlow1: { position: 'absolute', top: -60, right: -80, width: 260, height: 260, borderRadius: 130, backgroundColor: Colors.primary, opacity: 0.04 },
-  bgGlow2: { position: 'absolute', top: 180, left: -100, width: 300, height: 300, borderRadius: 150, backgroundColor: Colors.secondary, opacity: 0.035 },
+  bgGlow1: { position: 'absolute', top: -100, right: -80, width: 350, height: 350, borderRadius: 175, backgroundColor: Colors.volt, opacity: 0.035 },
+  bgGlow2: { position: 'absolute', top: 280, left: -120, width: 400, height: 400, borderRadius: 200, backgroundColor: Colors.flame, opacity: 0.04 },
   content: { paddingHorizontal: 20, paddingBottom: 130 },
 
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
   greeting: { color: Colors.textSub, fontSize: 13, fontFamily: 'Fredoka_400Regular', marginBottom: 2 },
-  userName: { color: Colors.text, fontSize: 32, fontFamily: 'Syne_700', lineHeight: 36, letterSpacing: -0.5 },
+  userName: { color: Colors.text, fontSize: 34, fontFamily: 'Syne_700', lineHeight: 38, letterSpacing: -1 },
   userSubRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
-  levelChip: { backgroundColor: Colors.purpleDim, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.purple + '30' },
+  levelChip: { backgroundColor: Colors.purpleDim, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, borderWidth: 1, borderColor: Colors.purple + '40' },
   levelChipText: { color: Colors.purple, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
-  rankChip: { backgroundColor: Colors.secondaryDim, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.secondary + '30' },
+  rankChip: { backgroundColor: Colors.secondaryDim, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, borderWidth: 1, borderColor: Colors.secondary + '40' },
   rankChipText: { color: Colors.secondary, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
   avatarWrap: { position: 'relative' },
-  avatarRing: { width: 56, height: 56, borderRadius: 28, borderWidth: 2, borderColor: Colors.primary + '50', alignItems: 'center', justifyContent: 'center' },
-  avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
-  levelDot: { position: 'absolute', bottom: -4, right: -4, backgroundColor: Colors.purple, width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background },
+  avatarRing: { width: 58, height: 58, borderRadius: 29, borderWidth: 2.5, borderColor: Colors.primary + '70', alignItems: 'center', justifyContent: 'center', shadowColor: Colors.primary, shadowOpacity: 0.5, shadowRadius: 10 },
+  avatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: Colors.surfaceElevated, borderWidth: 1, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
+  levelDot: { position: 'absolute', bottom: -4, right: -4, backgroundColor: Colors.purple, width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.background, shadowColor: Colors.purple, shadowOpacity: 0.8, shadowRadius: 6 },
   levelDotText: { color: 'white', fontSize: 9, fontFamily: 'Fredoka_700Bold' },
 
   xpBarWrap: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
   xpInfo: { alignItems: 'center' },
-  xpLabel: { color: Colors.textDim, fontSize: 7, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
-  xpCount: { color: Colors.secondary, fontSize: 12, fontFamily: 'Syne_700' },
+  xpLabel: { color: Colors.volt, fontSize: 7, fontFamily: 'Fredoka_700Bold', letterSpacing: 1 },
+  xpCount: { color: Colors.volt, fontSize: 12, fontFamily: 'Syne_700' },
   xpMax: { color: Colors.textDim, fontSize: 10 },
-  xpBarTrack: { flex: 1, height: 6, backgroundColor: Colors.surface, borderRadius: 3, overflow: 'hidden', position: 'relative' },
-  xpBarFill: { height: '100%', borderRadius: 3 },
-  xpBarShine: { position: 'absolute', top: 0, left: 0, height: '50%', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 3 },
-  gemPill: { backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, borderWidth: 1, borderColor: Colors.gold + '30' },
-  gemText: { color: Colors.gold, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
+  xpBarTrack: { flex: 1, height: 8, backgroundColor: Colors.surface, borderRadius: 4, overflow: 'hidden', position: 'relative', borderWidth: 1, borderColor: Colors.border },
+  xpBarFill: { height: '100%', borderRadius: 4 },
+  xpBarShine: { position: 'absolute', top: 0, left: 0, height: '50%', backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 4 },
+  gemPill: { backgroundColor: Colors.trophyDim, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: Colors.trophy + '40', shadowColor: Colors.trophy, shadowOpacity: 0.3, shadowRadius: 6 },
+  gemText: { color: Colors.trophy, fontSize: 11, fontFamily: 'Fredoka_700Bold' },
 
   formCard: { borderRadius: 24, overflow: 'hidden', padding: 18, borderWidth: 1, borderColor: Colors.border, marginBottom: 18 },
   formCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 24, borderWidth: 1, borderColor: 'rgba(139,92,246,0.12)' },
@@ -662,20 +738,20 @@ const s = StyleSheet.create({
 
   // Quick actions — tall gradient cards
   quickRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
-  quickCard: { flex: 1, height: 90, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  quickCard: { flex: 1, height: 96, borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } },
   quickCardInner: { flex: 1, padding: 12, justifyContent: 'space-between' },
-  quickCardEmoji: { fontSize: 20 },
+  quickCardEmoji: { fontSize: 22 },
   quickCardLabel: { color: 'white', fontSize: 12, fontFamily: 'Syne_700' },
-  quickCardSub: { color: 'rgba(255,255,255,0.55)', fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
+  quickCardSub: { color: 'rgba(255,255,255,0.6)', fontSize: 8, fontFamily: 'Fredoka_700Bold', letterSpacing: 0.5 },
 
-  heroCard: { height: 240, borderRadius: 32, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,92,34,0.15)' },
-  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 32, borderWidth: 1, borderColor: 'rgba(255,92,34,0.1)' },
-  heroGlow: { position: 'absolute', bottom: -50, left: '25%', width: 160, height: 160, borderRadius: 80, backgroundColor: Colors.primary, opacity: 0.08 },
+  heroCard: { height: 260, borderRadius: 36, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(184,255,0,0.15)', shadowColor: Colors.volt, shadowOpacity: 0.18, shadowRadius: 28, shadowOffset: { width: 0, height: 8 } },
+  heroBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 36, borderWidth: 1.5, borderColor: 'rgba(184,255,0,0.08)' },
+  heroGlow: { position: 'absolute', bottom: -50, left: '15%', width: 220, height: 220, borderRadius: 110, backgroundColor: Colors.volt, opacity: 0.07 },
   heroInner: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 8 },
-  streakNum: { color: Colors.text, fontSize: 54, fontFamily: 'Syne_700', lineHeight: 58, textAlign: 'center' },
-  streakLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginTop: -2 },
-  milestonePill: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.goldDim, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, marginTop: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.18)' },
-  milestoneText: { color: Colors.gold, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
+  streakNum: { color: Colors.volt, fontSize: 64, fontFamily: 'Syne_700', lineHeight: 68, textAlign: 'center', textShadowColor: Colors.volt, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 24 },
+  streakLabel: { color: Colors.textSub, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginTop: -2 },
+  milestonePill: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Colors.voltDim, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, marginTop: 10, borderWidth: 1, borderColor: 'rgba(184,255,0,0.22)' },
+  milestoneText: { color: Colors.volt, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
   mascotWrap: { marginBottom: -10 },
 
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
@@ -693,7 +769,7 @@ const s = StyleSheet.create({
   dayEmoji: { fontSize: 16 },
   dayLabel: { color: Colors.textDim, fontSize: 8, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.3 },
 
-  card: { backgroundColor: Colors.surface, borderRadius: 24, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', marginBottom: 20 },
+  card: { backgroundColor: Colors.surface, borderRadius: 26, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', marginBottom: 20 },
   cardDivider: { height: 1, backgroundColor: Colors.border, marginHorizontal: 16 },
 
   missionRow: { flexDirection: 'row', alignItems: 'center', padding: 16 },

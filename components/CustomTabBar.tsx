@@ -3,126 +3,70 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform, Dimension
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Home, Dumbbell, TrendingUp, Trophy, Users } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Colors } from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
 const TABS = [
-  { name: 'index',      label: 'Início',     Icon: Home },
+  { name: 'index',      label: 'Home',       Icon: Home },
   { name: 'treino',     label: 'Treinar',    Icon: Dumbbell, center: true },
-  { name: 'evolucao',   label: 'Evolução',   Icon: TrendingUp },
-  { name: 'conquistas', label: 'Conquistas', Icon: Trophy },
-  { name: 'feed',       label: 'Feed',       Icon: Users },
+  { name: 'evolucao',   label: 'Stats',      Icon: TrendingUp },
+  { name: 'conquistas', label: 'Troféus',    Icon: Trophy },
+  { name: 'feed',       label: 'Arena',      Icon: Users },
 ];
 
-// accent color per tab
-const TAB_COLORS: Record<string, string> = {
-  index:      Colors.primary,
-  treino:     Colors.primary,
-  evolucao:   Colors.secondary,
-  conquistas: Colors.gold,
-  feed:       Colors.purple,
+const TAB_ACCENT: Record<string, string> = {
+  index:      Colors.volt,
+  treino:     Colors.flame,
+  evolucao:   Colors.ice,
+  conquistas: Colors.trophy,
+  feed:       Colors.mystic,
 };
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const scales = useRef(TABS.map(() => new Animated.Value(1))).current;
-  const glows  = useRef(TABS.map(() => new Animated.Value(0))).current;
 
-  const handlePress = (route: any, index: number, isFocused: boolean) => {
-    Animated.parallel([
-      Animated.sequence([
-        Animated.timing(scales[index], { toValue: 0.85, duration: 80, useNativeDriver: true }),
-        Animated.spring(scales[index],  { toValue: 1,    friction: 4,  useNativeDriver: true }),
-      ]),
-      Animated.timing(glows[index], { toValue: 1, duration: 180, useNativeDriver: true }),
+  const press = (route: any, idx: number, focused: boolean) => {
+    Animated.sequence([
+      Animated.timing(scales[idx], { toValue: 0.84, duration: 80, useNativeDriver: true }),
+      Animated.spring(scales[idx], { toValue: 1, friction: 3, tension: 300, useNativeDriver: true }),
     ]).start();
-    if (!isFocused) navigation.navigate(route.name);
+    if (!focused) navigation.navigate(route.name);
   };
 
-  const orderedTabs = TABS.map(tab => {
-    const routeIndex = state.routes.findIndex(r => r.name === tab.name);
-    return { ...tab, routeIndex, route: state.routes[routeIndex] };
+  const tabs = TABS.map(t => {
+    const ri = state.routes.findIndex(r => r.name === t.name);
+    return { ...t, ri, route: state.routes[ri] };
   }).filter(t => t.route);
 
   return (
-    <View style={s.wrapper} pointerEvents="box-none">
-      {/* fade above */}
-      <LinearGradient
-        colors={['transparent', Colors.background + 'F0', Colors.background]}
-        style={s.fadeGradient}
-        pointerEvents="none"
-      />
-
-      <View style={s.container}>
-        {/* glass layer */}
-        <View style={StyleSheet.absoluteFill}>
-          <LinearGradient
-            colors={['rgba(20,28,50,0.96)', 'rgba(10,14,28,0.98)']}
-            style={[StyleSheet.absoluteFill, { borderRadius: 34 }]}
-          />
-        </View>
-        {/* rim highlight */}
-        <View style={s.rimTop} />
-
-        {orderedTabs.map((tab, i) => {
-          const isFocused = state.index === tab.routeIndex;
-          const { Icon } = tab;
-          const accentColor = TAB_COLORS[tab.name] ?? Colors.primary;
-
-          if (tab.center) {
+    <View style={st.wrap} pointerEvents="box-none">
+      <LinearGradient colors={['transparent', Colors.background + 'DD', Colors.background]} style={st.fade} pointerEvents="none" />
+      <View style={st.bar}>
+        <LinearGradient colors={['rgba(13,16,23,0.97)', 'rgba(5,6,8,0.99)']} style={[StyleSheet.absoluteFill, { borderRadius: 28 }]} />
+        <View style={st.rim} />
+        {tabs.map((t, i) => {
+          const on = state.index === t.ri;
+          const { Icon } = t;
+          const c = TAB_ACCENT[t.name] || Colors.flame;
+          if (t.center) {
             return (
-              <Animated.View key={tab.name} style={{ transform: [{ scale: scales[i] }], zIndex: 10 }}>
-                <TouchableOpacity
-                  onPress={() => handlePress(tab.route, i, isFocused)}
-                  style={s.centerBtn}
-                  activeOpacity={0.9}
-                >
-                  <LinearGradient
-                    colors={isFocused
-                      ? [Colors.primary, '#C2410C', '#7C2D12']
-                      : ['#1C2640', '#111827']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  {/* glow ring when active */}
-                  {isFocused && (
-                    <View style={[StyleSheet.absoluteFill, s.centerGlow]} />
-                  )}
-                  <Icon size={26} color="white" strokeWidth={isFocused ? 2.5 : 1.8} />
+              <Animated.View key={t.name} style={{ transform: [{ scale: scales[i] }], zIndex: 10 }}>
+                <TouchableOpacity onPress={() => press(t.route, i, on)} style={st.cBtn} activeOpacity={0.85}>
+                  <LinearGradient colors={on ? [Colors.flame, '#CC3800'] : ['#181D28', '#0E1018']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+                  {on && <View style={st.cGlow} />}
+                  <Icon size={26} color="white" strokeWidth={on ? 2.5 : 2} />
                 </TouchableOpacity>
               </Animated.View>
             );
           }
-
           return (
-            <Animated.View key={tab.name} style={[s.tabItem, { transform: [{ scale: scales[i] }] }]}>
-              <TouchableOpacity
-                onPress={() => handlePress(tab.route, i, isFocused)}
-                style={s.tabTouch}
-                activeOpacity={0.7}
-              >
-                {/* active pill bg */}
-                {isFocused && (
-                  <View style={[s.activePill, { shadowColor: accentColor }]}>
-                    <LinearGradient
-                      colors={[accentColor + '28', accentColor + '10']}
-                      style={[StyleSheet.absoluteFill, { borderRadius: 14 }]}
-                    />
-                  </View>
-                )}
-                <Icon
-                  size={21}
-                  color={isFocused ? accentColor : Colors.textDim}
-                  strokeWidth={isFocused ? 2.5 : 1.5}
-                />
-                <Text style={[s.tabLabel, isFocused && { color: accentColor }]}>
-                  {tab.label}
-                </Text>
-                {isFocused && (
-                  <View style={[s.activeLine, { backgroundColor: accentColor }]} />
-                )}
+            <Animated.View key={t.name} style={[st.tab, { transform: [{ scale: scales[i] }] }]}>
+              <TouchableOpacity onPress={() => press(t.route, i, on)} style={st.tabBtn} activeOpacity={0.6}>
+                {on && <View style={[st.pill, { backgroundColor: c + '18' }]} />}
+                <Icon size={21} color={on ? c : Colors.textDim} strokeWidth={on ? 2.4 : 1.6} />
+                <Text style={[st.lbl, on && { color: c }]}>{t.label}</Text>
+                {on && <View style={[st.dot, { backgroundColor: c, shadowColor: c }]} />}
               </TouchableOpacity>
             </Animated.View>
           );
@@ -132,97 +76,17 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   );
 }
 
-const BOTTOM_INSET = Platform.OS === 'ios' ? 30 : 10;
-const BAR_HEIGHT   = 72;
-
-const s = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    alignItems: 'center',
-    paddingBottom: BOTTOM_INSET,
-  },
-  fadeGradient: {
-    position: 'absolute',
-    left: 0, right: 0, bottom: 0,
-    height: BAR_HEIGHT + BOTTOM_INSET + 50,
-  },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 34,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    paddingHorizontal: 6,
-    paddingVertical: 8,
-    width: width - 28,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.6,
-    shadowRadius: 30,
-    elevation: 24,
-  },
-  rimTop: {
-    position: 'absolute',
-    top: 0, left: 20, right: 20,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.10)',
-    borderRadius: 1,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  tabTouch: {
-    alignItems: 'center',
-    gap: 3,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    minWidth: 52,
-  },
-  activePill: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    borderRadius: 14,
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 0,
-  },
-  tabLabel: {
-    fontSize: 8.5,
-    fontFamily: 'Fredoka_700Bold',
-    color: Colors.textDim,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-  },
-  activeLine: {
-    width: 16,
-    height: 2,
-    borderRadius: 1,
-    marginTop: 1,
-    opacity: 0.8,
-  },
-  centerBtn: {
-    width: 58,
-    height: 58,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.14)',
-    marginHorizontal: 2,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: 12,
-  },
-  centerGlow: {
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: Colors.primary + '40',
-  },
+const BI = Platform.OS === 'ios' ? 28 : 8;
+const st = StyleSheet.create({
+  wrap: { position: 'absolute', bottom: 0, left: 0, right: 0, alignItems: 'center', paddingBottom: BI },
+  fade: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 140 },
+  bar: { flexDirection: 'row', alignItems: 'center', borderRadius: 28, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 4, paddingVertical: 6, width: width - 20, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.8, shadowRadius: 30, elevation: 28 },
+  rim: { position: 'absolute', top: 0, left: 16, right: 16, height: 1, backgroundColor: 'rgba(255,255,255,0.10)' },
+  tab: { flex: 1, alignItems: 'center' },
+  tabBtn: { alignItems: 'center', paddingVertical: 5, paddingHorizontal: 4, minWidth: 48 },
+  pill: { ...StyleSheet.absoluteFillObject, borderRadius: 14 },
+  lbl: { fontSize: 8, fontFamily: 'Fredoka_700Bold', color: Colors.textDim, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 1 },
+  dot: { width: 4, height: 4, borderRadius: 2, marginTop: 2, shadowOpacity: 0.9, shadowRadius: 4, shadowOffset: { width: 0, height: 0 } },
+  cBtn: { width: 60, height: 60, borderRadius: 22, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.14)', marginHorizontal: 2, shadowColor: Colors.flame, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.65, shadowRadius: 18, elevation: 14 },
+  cGlow: { ...StyleSheet.absoluteFillObject, borderRadius: 22, borderWidth: 1.5, borderColor: Colors.flame + '50' },
 });

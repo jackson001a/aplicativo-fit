@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -316,7 +316,7 @@ export default function CharacterSheetScreen() {
 
         {/* Level Card */}
         <View style={s.levelCard}>
-          <LinearGradient colors={['#110E24', '#0A0818']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#100E20', '#08061A']} style={StyleSheet.absoluteFill} />
           <View style={s.levelCardBorder} />
           <View style={s.levelTop}>
             <View style={{ flex: 1 }}>
@@ -328,7 +328,7 @@ export default function CharacterSheetScreen() {
           </View>
           <View style={s.xpBarRow}>
             <View style={s.xpTrack}>
-              <LinearGradient colors={[Colors.secondary, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpFill, { width: '74%' }]} />
+              <LinearGradient colors={[Colors.volt, Colors.ice]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[s.xpFill, { width: '74%' }]} />
             </View>
             <Text style={s.xpPct}>74%</Text>
           </View>
@@ -429,23 +429,23 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background, paddingTop: 55 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
   headerSub: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5 },
-  headerTitle: { color: Colors.text, fontSize: 26, fontFamily: 'Syne_700', lineHeight: 30 },
-  avatarBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
+  headerTitle: { color: Colors.text, fontSize: 30, fontFamily: 'Syne_700', lineHeight: 34, letterSpacing: -0.5 },
+  avatarBtn: { width: 46, height: 46, borderRadius: 16, backgroundColor: Colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
   content: { paddingHorizontal: 20, paddingBottom: 120 },
 
-  levelCard: { borderRadius: 28, overflow: 'hidden', padding: 20, marginBottom: 24, borderWidth: 1, borderColor: Colors.border },
-  levelCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 28, borderWidth: 1, borderColor: 'rgba(139,92,246,0.15)' },
+  levelCard: { borderRadius: 30, overflow: 'hidden', padding: 22, marginBottom: 24, borderWidth: 1, borderColor: 'rgba(168,85,247,0.22)', shadowColor: Colors.purple, shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 6 } },
+  levelCardBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 30, borderWidth: 1.5, borderColor: 'rgba(168,85,247,0.14)' },
   levelTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
   classTag: { color: Colors.purple, fontSize: 9, fontFamily: 'Fredoka_700Bold', letterSpacing: 1.5, marginBottom: 4 },
-  levelNum: { color: Colors.text, fontSize: 28, fontFamily: 'Syne_700' },
+  levelNum: { color: Colors.text, fontSize: 32, fontFamily: 'Syne_700', letterSpacing: -0.5 },
   xpLine: { color: Colors.textDim, fontSize: 11, fontFamily: 'Fredoka_400Regular', marginTop: 3 },
   xpBarRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
-  xpTrack: { flex: 1, height: 6, backgroundColor: Colors.surfaceElevated, borderRadius: 3, overflow: 'hidden' },
-  xpFill: { height: '100%', borderRadius: 3 },
+  xpTrack: { flex: 1, height: 8, backgroundColor: Colors.surfaceElevated, borderRadius: 4, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border },
+  xpFill: { height: '100%', borderRadius: 4 },
   xpPct: { color: Colors.textDim, fontSize: 10, fontFamily: 'Fredoka_700Bold' },
   levelStats: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 14 },
   levelStatItem: { flex: 1, alignItems: 'center' },
-  levelStatVal: { color: Colors.text, fontSize: 20, fontFamily: 'Syne_700' },
+  levelStatVal: { color: Colors.text, fontSize: 22, fontFamily: 'Syne_700' },
   levelStatLabel: { color: Colors.textDim, fontSize: 9, fontFamily: 'Fredoka_700Bold', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
   levelStatDivider: { width: 1, backgroundColor: Colors.border },
 
